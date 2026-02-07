@@ -22,6 +22,7 @@ Before writing ANY code - even a one-line fix - create a GitHub issue that descr
 ## When to Create Issues
 
 **ALWAYS before:**
+
 - New features
 - Bug fixes
 - Refactoring
@@ -30,6 +31,7 @@ Before writing ANY code - even a one-line fix - create a GitHub issue that descr
 - Any code modification
 
 **The ONLY exceptions:**
+
 - Updating documentation-only files (README, CLAUDE.md)
 - Adding/modifying comments with zero code changes
 
@@ -70,14 +72,14 @@ If a feature requires multiple steps (scaffolding, schema, API, tests), create s
 
 ## Quick Reference
 
-| Action | Command |
-|--------|---------|
-| Create issue | `gh issue create --title "..." --body "..."` |
-| List issues | `gh issue list` |
-| View issue | `gh issue view <number>` |
-| Close issue | `gh issue close <number>` |
-| Add labels | `gh issue edit <number> --add-label "feature"` |
-| Check existing | `gh issue list --search "keyword"` |
+| Action         | Command                                        |
+| -------------- | ---------------------------------------------- |
+| Create issue   | `gh issue create --title "..." --body "..."`   |
+| List issues    | `gh issue list`                                |
+| View issue     | `gh issue view <number>`                       |
+| Close issue    | `gh issue close <number>`                      |
+| Add labels     | `gh issue edit <number> --add-label "feature"` |
+| Check existing | `gh issue list --search "keyword"`             |
 
 ## Red Flags - STOP and Create an Issue
 
@@ -95,15 +97,15 @@ You are about to violate this rule if:
 
 ## Common Rationalizations
 
-| Excuse | Reality |
-|--------|---------|
-| "It's too small for an issue" | Small changes still need tracking. Issues take 30 seconds. |
-| "I'll create the issue after" | You won't. And even if you do, you lost the planning benefit. |
+| Excuse                             | Reality                                                            |
+| ---------------------------------- | ------------------------------------------------------------------ |
+| "It's too small for an issue"      | Small changes still need tracking. Issues take 30 seconds.         |
+| "I'll create the issue after"      | You won't. And even if you do, you lost the planning benefit.      |
 | "Let's just get this done quickly" | Spending 1 minute on an issue saves 30 minutes of confusion later. |
-| "The user didn't ask for an issue" | The project convention is issues-first. Always. |
-| "I already know what to do" | Great - then writing the issue will take 15 seconds. Do it. |
-| "It's just a refactor" | Refactors need tracking too. Create the issue. |
-| "I'll batch the issues later" | No. One issue per change, created before the change. |
+| "The user didn't ask for an issue" | The project convention is issues-first. Always.                    |
+| "I already know what to do"        | Great - then writing the issue will take 15 seconds. Do it.        |
+| "It's just a refactor"             | Refactors need tracking too. Create the issue.                     |
+| "I'll batch the issues later"      | No. One issue per change, created before the change.               |
 
 ## Workflow
 
