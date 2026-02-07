@@ -12,3 +12,12 @@ This is a service that allows me to do the following:
 ### Why does this exist? 
 
 [Here's my blog post explaining why this exists](https://luther.io/articles/linkblog/)
+
+
+### Stack
+
+My goal is to learn TypeScript, and NestJS along with Supabase. So..
+
+- TypeScript
+- NestJS
+- Supabase
