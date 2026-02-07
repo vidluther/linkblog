@@ -25,26 +25,26 @@ Client (curl/scripts) --> NestJS API --> Supabase (Postgres)
 
 **Table: `links`**
 
-| Column | Type | Constraints |
-|--------|------|-------------|
-| id | uuid | PK, default gen_random_uuid() |
-| url | text | NOT NULL |
-| title | text | |
-| summary | text | |
-| created_at | timestamptz | default now() |
-| updated_at | timestamptz | default now() |
+| Column     | Type        | Constraints                   |
+| ---------- | ----------- | ----------------------------- |
+| id         | uuid        | PK, default gen_random_uuid() |
+| url        | text        | NOT NULL                      |
+| title      | text        |                               |
+| summary    | text        |                               |
+| created_at | timestamptz | default now()                 |
+| updated_at | timestamptz | default now()                 |
 
 ### Endpoints
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | /links | API key | Create a link |
-| GET | /links | API key | List all links (desc by created_at) |
-| GET | /links/:id | API key | Get a single link |
-| PATCH | /links/:id | API key | Update a link |
-| DELETE | /links/:id | API key | Delete a link (204) |
-| GET | /feed | Public | RSS 2.0 feed |
-| GET | /health | Public | Health check for App Runner |
+| Method | Path       | Auth    | Description                         |
+| ------ | ---------- | ------- | ----------------------------------- |
+| POST   | /links     | API key | Create a link                       |
+| GET    | /links     | API key | List all links (desc by created_at) |
+| GET    | /links/:id | API key | Get a single link                   |
+| PATCH  | /links/:id | API key | Update a link                       |
+| DELETE | /links/:id | API key | Delete a link (204)                 |
+| GET    | /feed      | Public  | RSS 2.0 feed                        |
+| GET    | /health    | Public  | Health check for App Runner         |
 
 ## Implementation Phases
 
@@ -61,7 +61,7 @@ Client (curl/scripts) --> NestJS API --> Supabase (Postgres)
 
 #### Step 2 - Define links table schema (Issue #2)
 
-*Can be done in parallel with Step 3.*
+_Can be done in parallel with Step 3._
 
 - Write SQL migration: `supabase/migrations/001_create_links_table.sql`
 - Create the table in the existing Supabase instance
@@ -69,7 +69,7 @@ Client (curl/scripts) --> NestJS API --> Supabase (Postgres)
 
 #### Step 3 - Connect to Supabase (Issue #3)
 
-*Can be done in parallel with Step 2.*
+_Can be done in parallel with Step 2._
 
 - Install `@supabase/supabase-js` and `@nestjs/config`
 - Create SupabaseModule + SupabaseService (injectable singleton client)

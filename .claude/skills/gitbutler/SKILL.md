@@ -21,11 +21,13 @@ Help users work with GitButler CLI (`but` command) in workspace mode.
 
 **The Agent Idiom: `--json --status-after`**
 Combine these flags on every mutation command. You get structured output AND updated workspace state in a single call:
+
 ```bash
 but commit <branch> -m "msg" --changes <id>,<id> --json --status-after
 # Returns: {"result": {...}, "status": {<full workspace status>}}
 # On status failure: {"result": {...}, "status_error": "..."} — handle gracefully
 ```
+
 This eliminates the need for a separate `but status --json` call after mutations. Use on: `commit`, `absorb`, `rub`, `stage`, `amend`, `squash`, `move`, `uncommit`.
 
 **Commit early, commit often.** Don't hesitate to create commits - GitButler makes editing history trivial. You can always `squash`, `reword`, or `absorb` changes into existing commits later. Small atomic commits are better than large uncommitted changes.
@@ -55,16 +57,16 @@ You can batch multiple file edits before committing - no need to commit after ev
 
 **Quick translation (git → but):**
 
-| Instead of | Use |
-|---|---|
-| `git status` | `but status --json` |
-| `git add <file>` | `but stage <file> <branch>` or `--changes` on commit |
-| `git commit -m "msg"` | `but commit <branch> -m "msg" --json --status-after` |
-| `git checkout -b <name>` | `but branch new <name>` |
-| `git push` | `but push` or `but pr new <branch>` |
-| `git rebase -i` | `but squash`, `but reword`, `but move` |
-| `git stash` | `but unapply <branch>` |
-| `git cherry-pick` | `but pick <commit> <branch>` |
+| Instead of               | Use                                                  |
+| ------------------------ | ---------------------------------------------------- |
+| `git status`             | `but status --json`                                  |
+| `git add <file>`         | `but stage <file> <branch>` or `--changes` on commit |
+| `git commit -m "msg"`    | `but commit <branch> -m "msg" --json --status-after` |
+| `git checkout -b <name>` | `but branch new <name>`                              |
+| `git push`               | `but push` or `but pr new <branch>`                  |
+| `git rebase -i`          | `but squash`, `but reword`, `but move`               |
+| `git stash`              | `but unapply <branch>`                               |
+| `git cherry-pick`        | `but pick <commit> <branch>`                         |
 
 ## Quick Start
 
@@ -95,36 +97,64 @@ For detailed command syntax and all available options, see [references/reference
 - `but diff <id>` - Show diff
 
 **Flags explanation:**
+
 - `--json` - Output structured JSON instead of human-readable text (always use for agents)
 - `-f` - Include detailed file lists in status output (combines with --json: `but status --json -f`)
 - `--status-after` - After a mutation command (`commit`, `absorb`, `rub`, `stage`, `amend`, `squash`, `move`, `uncommit`), also output workspace status. With `--json`, wraps as `{"result": ..., "status": ...}` on success, or `{"result": ..., "status_error": "..."}` if the status query fails. Saves a separate `but status` call.
 
 **JSON output shape (`but status --json`):**
+
 ```jsonc
 {
   "unassignedChanges": [
-    {"cliId": "g0", "filePath": "src/main.rs", "changeType": "modified"}
+    { "cliId": "g0", "filePath": "src/main.rs", "changeType": "modified" },
   ],
-  "stacks": [{
-    "cliId": "m0",
-    "assignedChanges": [{"cliId": "h0", "filePath": "lib.rs", "changeType": "modified"}],
-    "branches": [{
-      "cliId": "fe", "name": "feature-x",
-      "commits": [{
-        "cliId": "1b", "commitId": "abc123...", "createdAt": "2025-01-15T10:30:00+00:00",
-        "message": "Add feature", "authorName": "Jane Dev", "authorEmail": "jane@example.com",
-        "conflicted": null, "reviewId": null, "changes": null
-      }],
-      "upstreamCommits": [],
-      "branchStatus": "unpushedCommits",
-      "reviewId": null, "ci": null
-    }]
-  }],
-  "mergeBase": {"cliId": "", "commitId": "def456...", "createdAt": "...", "message": "..."},
+  "stacks": [
+    {
+      "cliId": "m0",
+      "assignedChanges": [
+        { "cliId": "h0", "filePath": "lib.rs", "changeType": "modified" },
+      ],
+      "branches": [
+        {
+          "cliId": "fe",
+          "name": "feature-x",
+          "commits": [
+            {
+              "cliId": "1b",
+              "commitId": "abc123...",
+              "createdAt": "2025-01-15T10:30:00+00:00",
+              "message": "Add feature",
+              "authorName": "Jane Dev",
+              "authorEmail": "jane@example.com",
+              "conflicted": null,
+              "reviewId": null,
+              "changes": null,
+            },
+          ],
+          "upstreamCommits": [],
+          "branchStatus": "unpushedCommits",
+          "reviewId": null,
+          "ci": null,
+        },
+      ],
+    },
+  ],
+  "mergeBase": {
+    "cliId": "",
+    "commitId": "def456...",
+    "createdAt": "...",
+    "message": "...",
+  },
   // upstreamState.latestCommit has the same Commit shape as above
-  "upstreamState": {"behind": 0, "latestCommit": {"cliId": "...", "commitId": "..."}, "lastFetched": "2025-01-15T10:00:00Z"}
+  "upstreamState": {
+    "behind": 0,
+    "latestCommit": { "cliId": "...", "commitId": "..." },
+    "lastFetched": "2025-01-15T10:00:00Z",
+  },
 }
 ```
+
 All Commit objects share the same shape: `cliId`, `commitId`, `createdAt`, `message`, `authorName`, `authorEmail`, `conflicted`, `reviewId`, `changes`. `conflicted` is `null` for upstream commits, `true`/`false` for local. `changes` is `null` unless `-f` is passed. `reviewId` and `ci` are `null` when no forge data is available (use `--refresh-prs` to force a sync).
 Use `cliId` values as arguments to other commands (e.g., `--changes g0,h0`). With `--status-after`, mutations return `{"result": <command output>, "status": <above shape>}` (or `"status_error"` instead of `"status"` if the status query fails). Note: IDs are generated per-session — always read them from `but status --json`, don't hardcode them.
 
@@ -148,6 +178,7 @@ Use `cliId` values as arguments to other commands (e.g., `--changes g0,h0`). Wit
 - `but absorb` - Absorb ALL uncommitted changes (use with caution)
 
 **Getting IDs for --changes:**
+
 - **File IDs**: `but status --json` → each entry in `unassignedChanges` / `assignedChanges` has a `cliId` (e.g., `g0`, `h0`)
 - **Hunk IDs**: `but diff --json` (uncommitted changes only) → each entry in `changes[]` has an `id` field (e.g., `e8`, `j0`) for fine-grained commits. When a file has multiple hunks, each hunk is a separate entry with its own `id`. Note: for commit/branch diffs, `id` is absent — those diffs are per-file with hunks nested under `diff.hunks`
 
