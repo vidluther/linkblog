@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+Always use Context7 MCP when I need library/API documentation, code generation, setup or configuration steps without me having to explicitly ask.
+
 # Project
 
 Linkblog Service - a personal bookmarking API (NestJS + TypeScript + Supabase) that publishes an RSS feed for luther.io/blogroll.
@@ -19,6 +21,29 @@ See `docs/implementation-plan.md` for the full implementation plan and architect
 - `SUPABASE_ANON_KEY` - Supabase anonymous key
 - `API_KEY` - Protects write endpoints via `x-api-key` header
 - `PORT` - Server port (set by App Runner in production)
+
+## Supabase JS Client (`@supabase/supabase-js`)
+
+- **Version:** v2.x (latest)
+- **Init:** `createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, options)` — use generated types for full type safety
+- **Type generation:** `npx supabase gen types typescript --project-id <ref> > database.types.ts`
+- **Server-side options:** Disable auth features not needed in a backend service:
+  ```ts
+  createClient<Database>(url, key, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  })
+  ```
+- **Query patterns (all return `{ data, error }`):**
+  - Select: `supabase.from('links').select('*').order('created_at', { ascending: false })`
+  - Select one: `supabase.from('links').select('*').eq('id', id).single()`
+  - Insert: `supabase.from('links').insert({ url, title, summary }).select()`
+  - Update: `supabase.from('links').update({ title, updated_at: new Date().toISOString() }).eq('id', id).select()`
+  - Delete: `supabase.from('links').delete().eq('id', id)`
+  - Upsert: `supabase.from('links').upsert(row, { onConflict: 'id' }).select()`
+  - Count: `supabase.from('links').select('*', { count: 'exact', head: false })`
+- **Filters:** `.eq()`, `.neq()`, `.gt()`, `.gte()`, `.lt()`, `.lte()`, `.like()`, `.ilike()`, `.in()`
+- **Pagination:** `.order(column, { ascending })`, `.limit(n)`, `.range(from, to)`
+- **Error handling:** Always check `error` before using `data` — errors are returned, not thrown
 
 ## Workflow
 
