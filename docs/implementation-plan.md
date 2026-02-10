@@ -1,3 +1,8 @@
+---
+layout: default
+title: Implementation Plan
+---
+
 # Linkblog Service - Implementation Plan
 
 ## Overview
