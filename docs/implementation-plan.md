@@ -1,3 +1,8 @@
+---
+layout: default
+title: Implementation Plan
+---
+
 # Linkblog Service - Implementation Plan
 
 ## Overview
@@ -25,14 +30,14 @@ Client (curl/scripts) --> NestJS API --> Supabase (Postgres)
 
 **Table: `links`**
 
-| Column     | Type        | Constraints                   |
-| ---------- | ----------- | ----------------------------- |
-| id         | uuid        | PK, default gen_random_uuid() |
-| url        | text        | NOT NULL                      |
-| title      | text        |                               |
-| summary    | text        |                               |
-| created_at | timestamptz | default now()                 |
-| updated_at | timestamptz | default now()                 |
+| Column     | Type        | Constraints   |
+| ---------- | ----------- | ------------- |
+| id         | integer     | PK            |
+| url        | text        |               |
+| title      | text        |               |
+| summary    | text        |               |
+| created_at | timestamptz | default now() |
+| updated_at | timestamptz | default now() |
 
 ### Endpoints
 
@@ -46,93 +51,87 @@ Client (curl/scripts) --> NestJS API --> Supabase (Postgres)
 | GET    | /feed      | Public  | RSS 2.0 feed                        |
 | GET    | /health    | Public  | Health check for App Runner         |
 
+## GitHub Issues
+
+| Issue | Title                                              | Depends On | Status |
+| ----- | -------------------------------------------------- | ---------- | ------ |
+| #1    | Initialize Repository with Development Tooling     | —          | Closed |
+| #2    | Create implementation plan                          | —          | Closed |
+| #3    | Provision Supabase project & create `links` table   | —          | Closed |
+| #4    | Set up NestJS project skeleton                      | #1         | Closed |
+| #5    | Create Supabase client provider                     | #4         | Open   |
+| #6    | Implement links service (CRUD via Supabase)         | #5         | Open   |
+| #7    | Implement links controller & API-key guard          | #6         | Open   |
+| #8    | Implement RSS Feed endpoint (`/feed`)               | #6         | Open   |
+
 ## Implementation Phases
 
-### Phase 1: Foundation (Issues #1, #2, #3)
+### Phase 1: Foundation (Issues #1–#4) ✅
 
-**Goal:** Project scaffolded, database ready, Supabase connected.
+**Goal:** Project scaffolded, database ready.
 
-#### Step 1 - Scaffold NestJS project (Issue #1)
+- [x] Initialize repo with development tooling (Issue #1)
+- [x] Create implementation plan (Issue #2)
+- [x] Provision Supabase project & create `links` table with migration and seed data (Issue #3)
+- [x] Set up NestJS project skeleton with TypeScript strict mode, oxlint, links module scaffold (Issue #4)
 
-- `npx @nestjs/cli new` with TypeScript strict mode
-- Install oxlint
-- Create `.env.example` with SUPABASE_URL, SUPABASE_ANON_KEY, API_KEY, PORT
-- Verify app starts and responds
+### Phase 2: Supabase Client (Issue #5)
 
-#### Step 2 - Define links table schema (Issue #2)
+**Goal:** NestJS can talk to Supabase.
 
-_Can be done in parallel with Step 3._
+- [ ] Install `@nestjs/config` and configure `ConfigModule.forRoot({ isGlobal: true })`
+- [ ] Create `SupabaseModule` (`@Global()`) that provides a configured `@supabase/supabase-js` client
+- [ ] Client options disable `autoRefreshToken` and `persistSession` (server-side best practice)
+- [ ] Import `SupabaseModule` in `AppModule`
+- [ ] Verify connection works with a simple query
 
-- Write SQL migration: `supabase/migrations/001_create_links_table.sql`
-- Create the table in the existing Supabase instance
-- Verify table exists with correct columns and defaults
-
-#### Step 3 - Connect to Supabase (Issue #3)
-
-_Can be done in parallel with Step 2._
-
-- Install `@supabase/supabase-js` and `@nestjs/config`
-- Create SupabaseModule + SupabaseService (injectable singleton client)
-- Read SUPABASE_URL and SUPABASE_ANON_KEY from env
-- Verify connection works (health check or simple query)
-
-### Phase 2: Core API (Issues #8, #5)
+### Phase 3: Core API (Issues #6, #7)
 
 **Goal:** Full CRUD for links, protected by API key.
 
-#### Step 4 - API key guard (Issue #8)
+#### Links Service (Issue #6)
 
-- Create `ApiKeyGuard` that checks `x-api-key` header against `API_KEY` env var
-- Returns 401 if missing or incorrect
-- Applicable via `@UseGuards(ApiKeyGuard)` decorator
+- [ ] `findAll()` — returns links ordered by `created_at` descending
+- [ ] `findOne(id)` — returns a single link or throws `NotFoundException`
+- [ ] `create(dto)` — inserts a link and returns it
+- [ ] `update(id, dto)` — updates and returns, throws if missing
+- [ ] `remove(id)` — deletes, throws if missing
+- [ ] All methods check `{ data, error }` and throw on error
+- [ ] Unit tests with mocked Supabase client
 
-#### Step 5 - CRUD endpoints for /links (Issue #5)
+#### Controller & API Key Guard (Issue #7)
 
-- Create LinksModule, LinksController, LinksService
-- DTOs: CreateLinkDto (url required, title optional, summary optional), UpdateLinkDto
-- All routes protected by ApiKeyGuard
-- GET /links returns links ordered by created_at desc
-- PATCH updates updated_at
-- DELETE returns 204
-- Proper error responses (404, 400)
+- [ ] `ApiKeyGuard` reads `x-api-key` header, compares to `API_KEY` env var, returns 401 on mismatch
+- [ ] `GET /links` and `GET /links/:id` — public
+- [ ] `POST /links`, `PATCH /links/:id`, `DELETE /links/:id` — protected
+- [ ] DTOs use `class-validator` decorators
+- [ ] E2e tests (with and without valid API key)
 
-### Phase 3: RSS Feed (Issue #9)
+### Phase 4: RSS Feed (Issue #8)
 
 **Goal:** Public RSS feed for luther.io consumption.
 
-#### Step 6 - RSS feed endpoint (Issue #9)
+- [ ] Create `FeedModule` + `FeedController`
+- [ ] `GET /feed` returns RSS 2.0 XML (`Content-Type: application/rss+xml`)
+- [ ] Uses `feed` npm package to build RSS document
+- [ ] Each link → `<item>` with `<title>`, `<link>`, `<description>`, `<pubDate>`, `<guid>`
+- [ ] Unit/e2e test verifies valid XML output
 
-- Create FeedModule + FeedController
-- GET /feed returns RSS 2.0 XML (Content-Type: application/rss+xml)
-- Each item: title, link, description (summary), pubDate
-- Feed metadata: title, description, link
-- No auth required
-- Links ordered by created_at desc
-
-### Phase 4: Deployment (Issue #10)
+### Phase 5: Deployment (no issue yet)
 
 **Goal:** Dockerized and deployable to AWS App Runner.
 
-#### Step 7 - Dockerize for App Runner (Issue #10)
+- [ ] Multi-stage Dockerfile (build + production with slim Node base)
+- [ ] `.dockerignore` (node_modules, .git, .env, etc.)
+- [ ] `GET /health` endpoint for App Runner health checks
+- [ ] PORT read from environment (App Runner sets this)
 
-- Multi-stage Dockerfile (build + production with slim Node base)
-- `.dockerignore` (node_modules, .git, .env, etc.)
-- Health check endpoint: GET /health
-- PORT read from environment (App Runner sets this)
-- Verify docker build and run works locally
-
-## Parallel Execution Map
+## Dependency Graph
 
 ```
-Phase 1:  #1 ──────────┬──> #2 (schema)  ──┐
-                        └──> #3 (supabase) ─┤
-                                            │
-Phase 2:                    #8 (guard) ─────┤
-                                            └──> #5 (CRUD)
-                                            │
-Phase 3:                    #9 (RSS feed) ──┤
-                                            │
-Phase 4:                    #10 (Docker) ───┘
+Phase 1:  #1 (tooling) ──> #4 (skeleton) ──> #5 (supabase client)
+          #2 (plan)                                │
+          #3 (schema)                              v
+                                              #6 (service) ──┬──> #7 (controller + guard)
+                                                             └──> #8 (RSS feed)
 ```
-
-Steps 2+3 can run in parallel. Steps 5+6 can run in parallel once their dependencies are met.
