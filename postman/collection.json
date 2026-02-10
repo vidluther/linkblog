@@ -1,0 +1,714 @@
+{
+  "info": {
+    "_postman_id": "ebced492-34b2-40c0-bc20-30e72b7c62b4",
+    "name": "Linkblog API",
+    "description": "Personal bookmarking API (NestJS + Supabase) that publishes an RSS feed.\n\n## Setup\n1. Import the **Linkblog - Local** environment\n2. Set the `apiKey` variable to your `API_KEY` value\n3. Start the server: `npm run start:dev`\n4. Run requests — the collection auto-captures `linkId` from create/list responses\n\n## Auth\nAll `/links` endpoints require the `x-api-key` header. The collection inherits this from the folder-level auth config.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "19671261"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Server is alive', function () {",
+                  "    pm.expect(pm.response.text()).to.include('Hello World');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            },
+            "description": "Public health check endpoint. Returns 200 with \"Hello World!\" when the server is running."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Link - No API Key (expect 401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 401 (Unauthorized)', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://example.com\",\n  \"title\": \"Should Not Work\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/links",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links"
+              ]
+            },
+            "description": "Attempt to create a link with an invalid API key. Should return 401 Unauthorized."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Link - Wrong API Key (expect 401) Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 401 (Unauthorized)', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "value",
+                  "value": "iamnotthekey!",
+                  "type": "string"
+                },
+                {
+                  "key": "key",
+                  "value": "x-api-key",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://example.com\",\n  \"title\": \"Should Not Work\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/links",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links"
+              ]
+            },
+            "description": "Attempt to create a link with an invalid API key. Should return 401 Unauthorized."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Links",
+      "item": [
+        {
+          "name": "Create Link",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response has link fields', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('id');",
+                  "    pm.expect(body).to.have.property('url');",
+                  "    pm.expect(body).to.have.property('title');",
+                  "    pm.expect(body).to.have.property('created_at');",
+                  "});",
+                  "",
+                  "// Auto-capture linkId for downstream requests",
+                  "const body = pm.response.json();",
+                  "if (body && body.id) {",
+                  "    pm.environment.set('linkId', body.id);",
+                  "    console.log('Saved linkId:', body.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://example.com/interesting-article\",\n  \"title\": \"An Interesting Article\",\n  \"summary\": \"Worth reading because it covers an important topic.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/links",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links"
+              ]
+            },
+            "description": "Create a new bookmarked link. On success, auto-saves the returned `id` to `linkId` for use in subsequent requests."
+          },
+          "response": []
+        },
+        {
+          "name": "List All Links",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Capture first link id for convenience",
+                  "const body = pm.response.json();",
+                  "if (Array.isArray(body) && body.length > 0) {",
+                  "    pm.environment.set('linkId', body[0].id);",
+                  "    console.log('Saved linkId from first result:', body[0].id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/links",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links"
+              ]
+            },
+            "description": "Get all bookmarked links, ordered by `created_at` descending (newest first). Auto-saves the first link's `id` to `linkId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Link by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has link fields', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('id');",
+                  "    pm.expect(body).to.have.property('url');",
+                  "    pm.expect(body).to.have.property('title');",
+                  "    pm.expect(body).to.have.property('created_at');",
+                  "});",
+                  "",
+                  "pm.test('Returned correct link', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(String(body.id)).to.eql(pm.environment.get('linkId'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/links/{{linkId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{linkId}}"
+              ]
+            },
+            "description": "Get a single link by ID. Uses `linkId` variable (auto-set by Create or List requests)."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Link",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Title was updated', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql('Updated Title');",
+                  "});",
+                  "",
+                  "pm.test('updated_at changed', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('updated_at');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Title\",\n  \"summary\": \"Updated summary with new notes.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/links/{{linkId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{linkId}}"
+              ]
+            },
+            "description": "Partially update a link. All body fields are optional. Uses `linkId` variable."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Link",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200 or 204', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});",
+                  "",
+                  "// Clear linkId after deletion",
+                  "pm.environment.unset('linkId');",
+                  "console.log('Cleared linkId after deletion');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/links/{{linkId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{linkId}}"
+              ]
+            },
+            "description": "Delete a link by ID. Uses `linkId` variable. Clears the `linkId` variable on success."
+          },
+          "response": []
+        }
+      ],
+      "description": "CRUD operations on bookmarked links. All endpoints require `x-api-key` header.",
+      "auth": {
+        "type": "apikey",
+        "apikey": [
+          {
+            "key": "key",
+            "value": "x-api-key",
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "value": "{{apiKey}}",
+            "type": "string"
+          },
+          {
+            "key": "in",
+            "value": "header",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Feed",
+      "item": [
+        {
+          "name": "RSS Feed",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Content-Type is RSS XML', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('xml');",
+                  "});",
+                  "",
+                  "pm.test('Body contains RSS channel', function () {",
+                  "    pm.expect(pm.response.text()).to.include('<channel>');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/rss+xml"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/feed",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "feed"
+              ]
+            },
+            "description": "Public RSS 2.0 feed of all links (newest first). No auth required."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "CRUD Workflow (Run in Order)",
+      "item": [
+        {
+          "name": "1. Create a link",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Created (201)', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "pm.environment.set('workflowLinkId', body.id);",
+                  "pm.environment.set('workflowOriginalTitle', body.title);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://example.com/workflow-test\",\n  \"title\": \"Workflow Test Link\",\n  \"summary\": \"Created by the CRUD workflow runner.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/links",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Read the created link",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Found (200)', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Title matches', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql(pm.environment.get('workflowOriginalTitle'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{workflowLinkId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Update the link",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Updated (200)', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Title changed', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.include('Updated');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Workflow Test Link (Updated)\",\n  \"summary\": \"Updated by the CRUD workflow runner.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{workflowLinkId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Verify the update",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Found (200)', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Title reflects update', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.title).to.eql('Workflow Test Link (Updated)');",
+                  "});",
+                  "",
+                  "pm.test('Summary reflects update', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body.summary).to.include('Updated by');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{workflowLinkId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Delete the link",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Deleted (200 or 204)', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{workflowLinkId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. Confirm deletion (expect 404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Not Found (404)', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "// Clean up workflow variables",
+                  "pm.environment.unset('workflowLinkId');",
+                  "pm.environment.unset('workflowOriginalTitle');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{workflowLinkId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Run this folder sequentially to exercise the full create → read → update → verify → delete → confirm-deleted lifecycle.",
+      "auth": {
+        "type": "apikey",
+        "apikey": [
+          {
+            "key": "key",
+            "value": "x-api-key",
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "value": "{{apiKey}}",
+            "type": "string"
+          },
+          {
+            "key": "in",
+            "value": "header",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ]
+}

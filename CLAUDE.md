@@ -50,6 +50,15 @@ See `docs/implementation-plan.md` for the full implementation plan and architect
 - All code changes must reference a GitHub issue. Check `gh issue list` before starting work.
 - Use `oxlint` for linting and formatting.
 
+## Testing (Postman)
+
+- `postman/collection.json` — API collection (folders: Health, Links, Feed, CRUD Workflow)
+- `postman/environment.json` — "Linkblog - Local" env (vars: `baseUrl`, `apiKey`, `linkId`)
+- `postman/specs/` — reserved for API specs
+- Auth edge case tests (no key, wrong key) live in the Health folder, not a separate folder
+- Links and CRUD Workflow folders use folder-level `x-api-key` auth via `{{apiKey}}`
+- Test scripts auto-capture `linkId` from create/list responses for downstream requests
+
 ## Gotchas
 
 - `but commit` uses `-p <cli-id>` (or `--changes`) to commit specific files, not `--files` or `-F`.
