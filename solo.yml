@@ -1,0 +1,38 @@
+name: linkblog
+icon: null
+processes:
+  Stop Supabase:
+    command: pnpx supabase stop
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  Claude Session:
+    command: claude
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  reset local db:
+    command: pnpx supabase db reset
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  start dev:
+    command: pnpm run start:dev
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  Start Supabase:
+    command: pnpx supabase start
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
