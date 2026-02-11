@@ -4,8 +4,6 @@ title: Architecture
 toc: true
 ---
 
-# Architecture
-
 ## Overview
 
 Linkblog is a single-purpose API service. There is no frontend — it is designed to be called by scripts, shortcuts, or other services. The public RSS feed is consumed by [luther.io](https://luther.io) at build time.

@@ -4,8 +4,6 @@ title: Deployment
 toc: true
 ---
 
-# Deployment
-
 Linkblog is designed to run on **AWS App Runner** via Docker. This page covers building the image, configuring the environment, and deploying.
 
 ## Docker
