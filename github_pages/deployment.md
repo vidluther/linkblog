@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: single
 title: Deployment
+toc: true
 ---
 
 # Deployment
