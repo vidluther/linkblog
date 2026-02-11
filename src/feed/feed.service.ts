@@ -11,10 +11,11 @@ export class FeedService {
 
     const feed = new Feed({
       title: 'Linkblog',
-      description: 'Links worth reading',
+      description: 'Things that I found interesting',
       id: 'https://luther.io/blogroll',
       link: 'https://luther.io/blogroll',
       language: 'en',
+      generator: 'Linkblog',
       copyright: '',
     });
 
