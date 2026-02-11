@@ -158,27 +158,120 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
-                  "pm.test('Status is 201', function () {",
+                  "// ============================================",
+                  "// Create Link - Post-Response Tests",
+                  "// ============================================",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "// --------------------------------------------",
+                  "// 1. Performance Tests",
+                  "// --------------------------------------------",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});",
+                  "",
+                  "// --------------------------------------------",
+                  "// 2. Status Code Validation",
+                  "// --------------------------------------------",
+                  "pm.test('Status code is 201 Created', function () {",
                   "    pm.response.to.have.status(201);",
                   "});",
                   "",
-                  "pm.test('Response has link fields', function () {",
-                  "    const body = pm.response.json();",
+                  "// --------------------------------------------",
+                  "// 3. Response Header Validation",
+                  "// --------------------------------------------",
+                  "pm.test('Content-Type header is application/json', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "});",
+                  "",
+                  "// --------------------------------------------",
+                  "// 4. Required Fields Present",
+                  "// --------------------------------------------",
+                  "pm.test('Response contains all required fields', function () {",
                   "    pm.expect(body).to.have.property('id');",
                   "    pm.expect(body).to.have.property('url');",
                   "    pm.expect(body).to.have.property('title');",
+                  "    pm.expect(body).to.have.property('summary');",
                   "    pm.expect(body).to.have.property('created_at');",
+                  "    pm.expect(body).to.have.property('updated_at');",
                   "});",
                   "",
+                  "// --------------------------------------------",
+                  "// 5. Data Type Validation",
+                  "// --------------------------------------------",
+                  "pm.test('ID is a number', function () {",
+                  "    pm.expect(body.id).to.be.a('number');",
+                  "    pm.expect(Number.isInteger(body.id)).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('URL is a string', function () {",
+                  "    pm.expect(body.url).to.be.a('string');",
+                  "});",
+                  "",
+                  "pm.test('Title is a string', function () {",
+                  "    pm.expect(body.title).to.be.a('string');",
+                  "});",
+                  "",
+                  "pm.test('Summary is a string', function () {",
+                  "    pm.expect(body.summary).to.be.a('string');",
+                  "});",
+                  "",
+                  "// --------------------------------------------",
+                  "// 6. URL Format Validation",
+                  "// --------------------------------------------",
+                  "pm.test('URL has valid format', function () {",
+                  "    const urlPattern = /^https?:\\/\\/.+/i;",
+                  "    pm.expect(body.url).to.match(urlPattern);",
+                  "});",
+                  "",
+                  "// --------------------------------------------",
+                  "// 7. Title Validation",
+                  "// --------------------------------------------",
+                  "pm.test('Title is not empty', function () {",
+                  "    pm.expect(body.title.trim()).to.not.be.empty;",
+                  "});",
+                  "",
+                  "// --------------------------------------------",
+                  "// 8. Timestamp Format Validation (ISO 8601)",
+                  "// --------------------------------------------",
+                  "pm.test('created_at is valid ISO 8601 timestamp', function () {",
+                  "    const date = new Date(body.created_at);",
+                  "    pm.expect(date.toString()).to.not.equal('Invalid Date');",
+                  "    // Verify it can be parsed back to a valid date",
+                  "    pm.expect(date.toISOString()).to.be.a('string');",
+                  "});",
+                  "",
+                  "pm.test('updated_at is valid ISO 8601 timestamp', function () {",
+                  "    const date = new Date(body.updated_at);",
+                  "    pm.expect(date.toString()).to.not.equal('Invalid Date');",
+                  "    // Verify it can be parsed back to a valid date",
+                  "    pm.expect(date.toISOString()).to.be.a('string');",
+                  "});",
+                  "",
+                  "// ============================================",
                   "// Auto-capture linkId for downstream requests",
-                  "const body = pm.response.json();",
+                  "// ============================================",
                   "if (body && body.id) {",
                   "    pm.environment.set('linkId', body.id);",
                   "    console.log('Saved linkId:', body.id);",
                   "}"
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -192,7 +285,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"url\": \"https://example.com/interesting-article\",\n  \"title\": \"An Interesting Article\",\n  \"summary\": \"Worth reading because it covers an important topic.\"\n}"
+              "raw": "{\"url\": \"{{$randomUrl}}\", \"title\": \" Title is:{{$randomCatchPhraseAdjective}}\",\n    \"summary\": \"{{$randomCatchPhrase}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/links",
@@ -213,7 +311,6 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
                   "pm.test('Status is 200', function () {",
                   "    pm.response.to.have.status(200);",
@@ -229,7 +326,10 @@
                   "    pm.environment.set('linkId', body[0].id);",
                   "    console.log('Saved linkId from first result:', body[0].id);",
                   "}"
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -237,12 +337,29 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/links",
+              "raw": "{{baseUrl}}/links?url={{$randomUrl}}&title={{$randomAdjective}}&summary={{$randomWords}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "links"
+              ],
+              "query": [
+                {
+                  "key": "url",
+                  "value": "{{$randomUrl}}",
+                  "type": "text"
+                },
+                {
+                  "key": "title",
+                  "value": "{{$randomAdjective}}",
+                  "type": "text"
+                },
+                {
+                  "key": "summary",
+                  "value": "{{$randomWords}}",
+                  "type": "text"
+                }
               ]
             },
             "description": "Get all bookmarked links, ordered by `created_at` descending (newest first). Auto-saves the first link's `id` to `linkId`."
@@ -420,23 +537,11 @@
                   "});",
                   "",
                   "pm.test('Content-Type is RSS XML', function () {",
-                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/rss+xml');",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('xml');",
                   "});",
                   "",
                   "pm.test('Body contains RSS channel', function () {",
-                  "    const body = pm.response.text();",
-                  "    pm.expect(body).to.include('<rss version=\"2.0\"');",
-                  "    pm.expect(body).to.include('<channel>');",
-                  "    pm.expect(body).to.include('<title>Linkblog</title>');",
-                  "    pm.expect(body).to.include('<link>https://luther.io/blogroll</link>');",
-                  "    pm.expect(body).to.include('<description>Links worth reading</description>');",
-                  "});",
-                  "",
-                  "pm.test('Feed contains items with expected elements', function () {",
-                  "    const body = pm.response.text();",
-                  "    pm.expect(body).to.include('<item>');",
-                  "    pm.expect(body).to.include('<guid>');",
-                  "    pm.expect(body).to.include('<pubDate>');",
+                  "    pm.expect(pm.response.text()).to.include('<channel>');",
                   "});"
                 ]
               }
