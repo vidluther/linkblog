@@ -16,8 +16,6 @@ export class LinksService {
   ) {}
 
   async create(createLinkDto: CreateLinkDto) {
-    console.log('Adding link:', createLinkDto);
-
     const { data, error } = await this.supabase
       .from('links')
       .insert(createLinkDto)
