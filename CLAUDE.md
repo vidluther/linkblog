@@ -11,7 +11,7 @@ See `docs/implementation-plan.md` for the full implementation plan and architect
 ## Key Conventions
 
 - **Endpoints:** `/links` (CRUD, API key protected), `/feed` (public RSS 2.0), `/health` (public)
-- **Auth:** Single-user, no auth system. Write endpoints use `x-api-key` header checked against `API_KEY` env var.
+- **Auth:** Single-user, global `ApiKeyGuard` via `APP_GUARD`. Write endpoints require `x-api-key` header matching `API_KEY` env var. Public routes use `@Public()` decorator to opt out. See `src/auth/`.
 - **Data model:** `links` table in Supabase (id, url, title, summary, created_at, updated_at)
 - **Deploy:** AWS App Runner via Docker
 
