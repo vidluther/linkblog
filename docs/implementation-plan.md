@@ -62,7 +62,7 @@ Client (curl/scripts) --> NestJS API --> Supabase (Postgres)
 | #5    | Create Supabase client provider                     | #4         | Closed |
 | #6    | Implement links service (CRUD via Supabase)         | #5         | Open   |
 | #7    | Implement links controller & API-key guard          | #6         | Open   |
-| #8    | Implement RSS Feed endpoint (`/feed`)               | #6         | Open   |
+| #8    | Implement RSS Feed endpoint (`/feed`)               | #6         | Closed |
 
 ## Implementation Phases
 
@@ -107,14 +107,15 @@ Client (curl/scripts) --> NestJS API --> Supabase (Postgres)
 - [ ] DTOs use `class-validator` decorators
 - [ ] E2e tests (with and without valid API key)
 
-### Phase 4: RSS Feed (Issue #8)
+### Phase 4: RSS Feed (Issue #8) ✅
 
 **Goal:** Public RSS feed for luther.io consumption.
 
-- [ ] Create `FeedModule` + `FeedController`
-- [ ] `GET /feed` returns RSS 2.0 XML (`Content-Type: application/rss+xml`)
-- [ ] Uses `feed` npm package to build RSS document
-- [ ] Each link → `<item>` with `<title>`, `<link>`, `<description>`, `<pubDate>`, `<guid>`
+- [x] Create `FeedModule` + `FeedController`
+- [x] `GET /feed` returns RSS 2.0 XML (`Content-Type: application/rss+xml`)
+- [x] Uses `feed` npm package to build RSS document
+- [x] Each link → `<item>` with `<title>`, `<link>`, `<description>`, `<pubDate>`, `<guid>`
+- [x] `FeedService` reuses `LinksService.findAll()` — no duplicated Supabase queries
 - [ ] Unit/e2e test verifies valid XML output
 
 ### Phase 5: Deployment (no issue yet)
