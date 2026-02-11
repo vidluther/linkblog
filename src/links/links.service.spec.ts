@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LinksService } from './links.service';
-import { SUPABASE_CLIENT } from '../supabase/supabase.module.js';
+import { SUPABASE_CLIENT } from '../supabase/supabase.module.ts';
 
 const mockSupabaseClient = {
   from: jest.fn().mockReturnThis(),
