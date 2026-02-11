@@ -15,7 +15,10 @@ description: Use when the user asks to implement features, fix bugs, or make any
 NO CODE WITHOUT A GITHUB ISSUE FIRST
 ```
 
-Before writing ANY code - even a one-line fix - create a GitHub issue that describes what you're doing and why.
+Before writing ANY code - even a one-line fix do the following: 
+
+1. Check if a GitHub issue already exists for the change you want to make.
+2. If no issue exists, create a GitHub issue that describes what you're doing and why.
 
 **Violating the letter of this rule is violating the spirit of this rule.**
 
