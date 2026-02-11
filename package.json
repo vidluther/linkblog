@@ -5,6 +5,10 @@
   "author": "Vid Luther (vid@luther.io)",
   "private": true,
   "license": "MIT",
+  "packageManager": "pnpm@10.28.2",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "build": "nest build",
     "fmt": "oxfmt",

@@ -24,7 +24,7 @@ Client (curl/scripts) --> NestJS API --> Supabase (Postgres)
 - **API-only** - no frontend, interaction via API calls
 - **Minimal data model** - url, title, summary, created_at, updated_at
 - **RSS 2.0 feed** - public, reverse chronological, consumed by luther.io at build time
-- **Deploy** - AWS App Runner via Docker
+- **Deploy** - AWS App Runner via source code (`apprunner.yaml`)
 
 ### Data Model
 
@@ -53,16 +53,16 @@ Client (curl/scripts) --> NestJS API --> Supabase (Postgres)
 
 ## GitHub Issues
 
-| Issue | Title                                              | Depends On | Status |
-| ----- | -------------------------------------------------- | ---------- | ------ |
-| #1    | Initialize Repository with Development Tooling     | —          | Closed |
-| #2    | Create implementation plan                          | —          | Closed |
-| #3    | Provision Supabase project & create `links` table   | —          | Closed |
-| #4    | Set up NestJS project skeleton                      | #1         | Closed |
-| #5    | Create Supabase client provider                     | #4         | Closed |
-| #6    | Implement links service (CRUD via Supabase)         | #5         | Open   |
-| #7    | Implement links controller & API-key guard          | #6         | Open   |
-| #8    | Implement RSS Feed endpoint (`/feed`)               | #6         | Closed |
+| Issue | Title                                             | Depends On | Status |
+| ----- | ------------------------------------------------- | ---------- | ------ |
+| #1    | Initialize Repository with Development Tooling    | —          | Closed |
+| #2    | Create implementation plan                        | —          | Closed |
+| #3    | Provision Supabase project & create `links` table | —          | Closed |
+| #4    | Set up NestJS project skeleton                    | #1         | Closed |
+| #5    | Create Supabase client provider                   | #4         | Closed |
+| #6    | Implement links service (CRUD via Supabase)       | #5         | Open   |
+| #7    | Implement links controller & API-key guard        | #6         | Open   |
+| #8    | Implement RSS Feed endpoint (`/feed`)             | #6         | Closed |
 
 ## Implementation Phases
 
@@ -118,14 +118,15 @@ Client (curl/scripts) --> NestJS API --> Supabase (Postgres)
 - [x] `FeedService` reuses `LinksService.findAll()` — no duplicated Supabase queries
 - [ ] Unit/e2e test verifies valid XML output
 
-### Phase 5: Deployment (no issue yet)
+### Phase 5: Deployment (Issue #10) ✅
 
-**Goal:** Dockerized and deployable to AWS App Runner.
+**Goal:** Deployed to AWS App Runner via source code.
 
-- [ ] Multi-stage Dockerfile (build + production with slim Node base)
-- [ ] `.dockerignore` (node_modules, .git, .env, etc.)
-- [ ] `GET /health` endpoint for App Runner health checks
-- [ ] PORT read from environment (App Runner sets this)
+- [x] `apprunner.yaml` — build/run config (corepack + pnpm, Node.js 22 runtime)
+- [x] `GET /health` endpoint for App Runner health checks (`HealthModule`)
+- [x] PORT read from environment (App Runner sets this)
+- [x] CI workflow (`.github/workflows/ci.yml`) — lint, format, build, test on PRs to `main`
+- [x] `packageManager` field in `package.json` for corepack support
 
 ## Dependency Graph
 

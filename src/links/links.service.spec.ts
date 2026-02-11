@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { LinksService } from './links.service';
 import { SUPABASE_CLIENT } from '../supabase/supabase.module.js';
 
@@ -51,18 +54,28 @@ describe('LinksService', () => {
     it('should insert and return the new link', async () => {
       supabase.single.mockResolvedValue({ data: mockLink, error: null });
 
-      const result = await service.create({ url: 'https://example.com', title: 'Example' });
+      const result = await service.create({
+        url: 'https://example.com',
+        title: 'Example',
+      });
 
       expect(result).toEqual(mockLink);
       expect(supabase.from).toHaveBeenCalledWith('links');
-      expect(supabase.insert).toHaveBeenCalledWith({ url: 'https://example.com', title: 'Example' });
+      expect(supabase.insert).toHaveBeenCalledWith({
+        url: 'https://example.com',
+        title: 'Example',
+      });
     });
 
     it('should throw InternalServerErrorException on supabase error', async () => {
-      supabase.single.mockResolvedValue({ data: null, error: { message: 'insert failed' } });
+      supabase.single.mockResolvedValue({
+        data: null,
+        error: { message: 'insert failed' },
+      });
 
-      await expect(service.create({ url: 'https://example.com', title: 'Example' }))
-        .rejects.toThrow(InternalServerErrorException);
+      await expect(
+        service.create({ url: 'https://example.com', title: 'Example' }),
+      ).rejects.toThrow(InternalServerErrorException);
     });
   });
 
@@ -76,13 +89,20 @@ describe('LinksService', () => {
       expect(result).toEqual(mockLinks);
       expect(supabase.from).toHaveBeenCalledWith('links');
       expect(supabase.select).toHaveBeenCalledWith('*');
-      expect(supabase.order).toHaveBeenCalledWith('created_at', { ascending: false });
+      expect(supabase.order).toHaveBeenCalledWith('created_at', {
+        ascending: false,
+      });
     });
 
     it('should throw InternalServerErrorException on supabase error', async () => {
-      supabase.order.mockResolvedValue({ data: null, error: { message: 'db error' } });
+      supabase.order.mockResolvedValue({
+        data: null,
+        error: { message: 'db error' },
+      });
 
-      await expect(service.findAll()).rejects.toThrow(InternalServerErrorException);
+      await expect(service.findAll()).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 
@@ -113,7 +133,9 @@ describe('LinksService', () => {
         error: { code: 'OTHER', message: 'unexpected' },
       });
 
-      await expect(service.findOne(1)).rejects.toThrow(InternalServerErrorException);
+      await expect(service.findOne(1)).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 
@@ -127,7 +149,10 @@ describe('LinksService', () => {
       expect(result).toEqual(updated);
       expect(supabase.from).toHaveBeenCalledWith('links');
       expect(supabase.update).toHaveBeenCalledWith(
-        expect.objectContaining({ title: 'Updated', updated_at: expect.any(String) }),
+        expect.objectContaining({
+          title: 'Updated',
+          updated_at: expect.any(String),
+        }),
       );
       expect(supabase.eq).toHaveBeenCalledWith('id', 1);
     });
@@ -138,7 +163,9 @@ describe('LinksService', () => {
         error: { code: 'PGRST116', message: 'not found' },
       });
 
-      await expect(service.update(999, { title: 'Nope' })).rejects.toThrow(NotFoundException);
+      await expect(service.update(999, { title: 'Nope' })).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw InternalServerErrorException on generic supabase error', async () => {
@@ -147,7 +174,9 @@ describe('LinksService', () => {
         error: { code: 'OTHER', message: 'unexpected' },
       });
 
-      await expect(service.update(1, { title: 'Fail' })).rejects.toThrow(InternalServerErrorException);
+      await expect(service.update(1, { title: 'Fail' })).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 
@@ -176,7 +205,9 @@ describe('LinksService', () => {
         error: { code: 'OTHER', message: 'unexpected' },
       });
 
-      await expect(service.remove(1)).rejects.toThrow(InternalServerErrorException);
+      await expect(service.remove(1)).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 });

@@ -10,7 +10,9 @@ describe('ApiKeyGuard', () => {
 
   const API_KEY = 'test-api-key-123';
 
-  function createMockContext(headers: Record<string, string> = {}): ExecutionContext {
+  function createMockContext(
+    headers: Record<string, string> = {},
+  ): ExecutionContext {
     return {
       getHandler: jest.fn(),
       getClass: jest.fn(),
@@ -22,7 +24,9 @@ describe('ApiKeyGuard', () => {
 
   beforeEach(() => {
     reflector = new Reflector();
-    configService = { get: jest.fn().mockReturnValue(API_KEY) } as unknown as ConfigService;
+    configService = {
+      get: jest.fn().mockReturnValue(API_KEY),
+    } as unknown as ConfigService;
     guard = new ApiKeyGuard(reflector, configService);
   });
 
@@ -49,7 +53,9 @@ describe('ApiKeyGuard', () => {
     const context = createMockContext();
 
     expect(() => guard.canActivate(context)).toThrow(UnauthorizedException);
-    expect(() => guard.canActivate(context)).toThrow('Missing x-api-key header');
+    expect(() => guard.canActivate(context)).toThrow(
+      'Missing x-api-key header',
+    );
   });
 
   it('should throw UnauthorizedException when API key is wrong', () => {

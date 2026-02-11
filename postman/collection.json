@@ -34,12 +34,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                ""
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": [""]
             },
             "description": "Public health check endpoint. Returns 200 with \"Hello World!\" when the server is running."
           },
@@ -79,12 +75,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/links",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "links"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["links"]
             },
             "description": "Attempt to create a link with an invalid API key. Should return 401 Unauthorized."
           },
@@ -136,12 +128,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/links",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "links"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["links"]
             },
             "description": "Attempt to create a link with an invalid API key. Should return 401 Unauthorized."
           },
@@ -266,9 +254,7 @@
             {
               "listen": "prerequest",
               "script": {
-                "exec": [
-                  ""
-                ],
+                "exec": [""],
                 "type": "text/javascript",
                 "packages": {},
                 "requests": {}
@@ -294,12 +280,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/links",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "links"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["links"]
             },
             "description": "Create a new bookmarked link. On success, auto-saves the returned `id` to `linkId` for use in subsequent requests."
           },
@@ -338,12 +320,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links?url={{$randomUrl}}&title={{$randomAdjective}}&summary={{$randomWords}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "links"
-              ],
+              "host": ["{{baseUrl}}"],
+              "path": ["links"],
               "query": [
                 {
                   "key": "url",
@@ -399,13 +377,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links/{{linkId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "links",
-                "{{linkId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["links", "{{linkId}}"]
             },
             "description": "Get a single link by ID. Uses `linkId` variable (auto-set by Create or List requests)."
           },
@@ -450,13 +423,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/links/{{linkId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "links",
-                "{{linkId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["links", "{{linkId}}"]
             },
             "description": "Partially update a link. All body fields are optional. Uses `linkId` variable."
           },
@@ -486,13 +454,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links/{{linkId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "links",
-                "{{linkId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["links", "{{linkId}}"]
             },
             "description": "Delete a link by ID. Uses `linkId` variable. Clears the `linkId` variable on success."
           },
@@ -557,12 +520,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/feed",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "feed"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["feed"]
             },
             "description": "Public RSS 2.0 feed of all links (newest first). No auth required."
           },
@@ -606,12 +565,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/links",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "links"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["links"]
             }
           },
           "response": []
@@ -641,13 +596,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "links",
-                "{{workflowLinkId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["links", "{{workflowLinkId}}"]
             }
           },
           "response": []
@@ -686,13 +636,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "links",
-                "{{workflowLinkId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["links", "{{workflowLinkId}}"]
             }
           },
           "response": []
@@ -727,13 +672,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "links",
-                "{{workflowLinkId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["links", "{{workflowLinkId}}"]
             }
           },
           "response": []
@@ -758,13 +698,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "links",
-                "{{workflowLinkId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["links", "{{workflowLinkId}}"]
             }
           },
           "response": []
@@ -793,13 +728,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "links",
-                "{{workflowLinkId}}"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["links", "{{workflowLinkId}}"]
             }
           },
           "response": []

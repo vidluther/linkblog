@@ -54,11 +54,11 @@ Create a new link.
 }
 ```
 
-| Field     | Type   | Required | Description                     |
-| --------- | ------ | -------- | ------------------------------- |
-| `url`     | string | yes      | The URL being bookmarked        |
-| `title`   | string | yes      | Display title for the link      |
-| `summary` | string | no       | Your notes or a brief summary   |
+| Field     | Type   | Required | Description                   |
+| --------- | ------ | -------- | ----------------------------- |
+| `url`     | string | yes      | The URL being bookmarked      |
+| `title`   | string | yes      | Display title for the link    |
+| `summary` | string | no       | Your notes or a brief summary |
 
 **Example:**
 
@@ -161,11 +161,11 @@ Update an existing link.
 }
 ```
 
-| Field     | Type   | Required | Description            |
-| --------- | ------ | -------- | ---------------------- |
-| `url`     | string | no       | Updated URL            |
-| `title`   | string | no       | Updated title          |
-| `summary` | string | no       | Updated summary/notes  |
+| Field     | Type   | Required | Description           |
+| --------- | ------ | -------- | --------------------- |
+| `url`     | string | no       | Updated URL           |
+| `title`   | string | no       | Updated title         |
+| `summary` | string | no       | Updated summary/notes |
 
 **Example:**
 
@@ -242,12 +242,12 @@ All errors follow a consistent format:
 }
 ```
 
-| Status Code | Meaning               |
-| ----------- | --------------------- |
-| `400`       | Bad Request (invalid body) |
+| Status Code | Meaning                            |
+| ----------- | ---------------------------------- |
+| `400`       | Bad Request (invalid body)         |
 | `401`       | Unauthorized (missing/bad API key) |
-| `404`       | Not Found             |
-| `500`       | Internal Server Error  |
+| `404`       | Not Found                          |
+| `500`       | Internal Server Error              |
 
 ---
 
@@ -255,14 +255,14 @@ All errors follow a consistent format:
 
 The `links` table in Supabase:
 
-| Column       | Type          | Description                    |
-| ------------ | ------------- | ------------------------------ |
-| `id`         | integer (PK)  | Auto-assigned identifier       |
-| `url`        | text          | The bookmarked URL             |
-| `title`      | text          | Display title                  |
-| `summary`    | text          | Notes or brief description     |
-| `created_at` | timestamptz   | When the link was saved        |
-| `updated_at` | timestamptz   | When the link was last changed |
+| Column       | Type         | Description                    |
+| ------------ | ------------ | ------------------------------ |
+| `id`         | integer (PK) | Auto-assigned identifier       |
+| `url`        | text         | The bookmarked URL             |
+| `title`      | text         | Display title                  |
+| `summary`    | text         | Notes or brief description     |
+| `created_at` | timestamptz  | When the link was saved        |
+| `updated_at` | timestamptz  | When the link was last changed |
 
 ---
 
