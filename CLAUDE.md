@@ -50,6 +50,12 @@ See `docs/implementation-plan.md` for the full implementation plan and architect
 - All code changes must reference a GitHub issue. Check `gh issue list` before starting work.
 - Use `oxlint` for linting and formatting.
 
+## Testing (Jest)
+
+- `pnpm test` — run all tests. `pnpm test <pattern>` to filter by path (e.g. `pnpm test auth`).
+- Mock Supabase with a chainable object (`from/select/insert/update/delete/eq/order/single` all return `this`).
+- Use `Reflect.getMetadata(KEY, handler)` to verify decorator presence on controller methods.
+
 ## Testing (Postman)
 
 - `postman/collection.json` — API collection (folders: Health, Links, Feed, CRUD Workflow)
@@ -61,6 +67,7 @@ See `docs/implementation-plan.md` for the full implementation plan and architect
 
 ## Gotchas
 
+- Use `pnpx` (not `npx`) for one-off package execution — matches `pnpm` package manager.
 - `but commit` uses `-p <cli-id>` (or `--changes`) to commit specific files, not `--files` or `-F`.
 - GitHub repo: `vidluther/linkblog` - use with `gh` commands.
 
