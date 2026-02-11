@@ -1,7 +1,7 @@
 title: Linkblog
 description: A personal bookmarking API that publishes an RSS feed
 url: https://www.linkblog.in
-baseurl: 'docs.linkblog.in'
+baseurl: ''
 
 remote_theme: "mmistakes/minimal-mistakes"
 markdown: kramdown
