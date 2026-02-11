@@ -59,7 +59,7 @@ Client (curl/scripts) --> NestJS API --> Supabase (Postgres)
 | #2    | Create implementation plan                          | —          | Closed |
 | #3    | Provision Supabase project & create `links` table   | —          | Closed |
 | #4    | Set up NestJS project skeleton                      | #1         | Closed |
-| #5    | Create Supabase client provider                     | #4         | Open   |
+| #5    | Create Supabase client provider                     | #4         | Closed |
 | #6    | Implement links service (CRUD via Supabase)         | #5         | Open   |
 | #7    | Implement links controller & API-key guard          | #6         | Open   |
 | #8    | Implement RSS Feed endpoint (`/feed`)               | #6         | Open   |
@@ -75,15 +75,15 @@ Client (curl/scripts) --> NestJS API --> Supabase (Postgres)
 - [x] Provision Supabase project & create `links` table with migration and seed data (Issue #3)
 - [x] Set up NestJS project skeleton with TypeScript strict mode, oxlint, links module scaffold (Issue #4)
 
-### Phase 2: Supabase Client (Issue #5)
+### Phase 2: Supabase Client (Issue #5) ✅
 
 **Goal:** NestJS can talk to Supabase.
 
-- [ ] Install `@nestjs/config` and configure `ConfigModule.forRoot({ isGlobal: true })`
-- [ ] Create `SupabaseModule` (`@Global()`) that provides a configured `@supabase/supabase-js` client
-- [ ] Client options disable `autoRefreshToken` and `persistSession` (server-side best practice)
-- [ ] Import `SupabaseModule` in `AppModule`
-- [ ] Verify connection works with a simple query
+- [x] Install `@nestjs/config` and configure `ConfigModule.forRoot({ isGlobal: true })`
+- [x] Create `SupabaseModule` (`@Global()`) that provides a configured `@supabase/supabase-js` client
+- [x] Client options disable `autoRefreshToken` and `persistSession` (server-side best practice)
+- [x] Import `SupabaseModule` in `AppModule`
+- [x] Verify connection works with a simple query
 
 ### Phase 3: Core API (Issues #6, #7)
 
@@ -91,7 +91,7 @@ Client (curl/scripts) --> NestJS API --> Supabase (Postgres)
 
 #### Links Service (Issue #6)
 
-- [ ] `findAll()` — returns links ordered by `created_at` descending
+- [x] `findAll()` — returns links ordered by `created_at` descending
 - [ ] `findOne(id)` — returns a single link or throws `NotFoundException`
 - [ ] `create(dto)` — inserts a link and returns it
 - [ ] `update(id, dto)` — updates and returns, throws if missing

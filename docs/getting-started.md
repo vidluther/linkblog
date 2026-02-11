@@ -117,6 +117,17 @@ curl -H "x-api-key: your-api-key" http://localhost:3000/links
 curl http://localhost:3000/feed
 ```
 
+### Using Postman
+
+A Postman collection and environment are included in `postman/`:
+
+1. Import `postman/collection.json` and `postman/environment.json` into Postman
+2. Select the **Linkblog - Local** environment
+3. Set the `apiKey` variable to your `API_KEY` value
+4. Run individual requests or use the **Collection Runner** on the "CRUD Workflow" folder for a full end-to-end lifecycle test
+
+The collection auto-captures `linkId` from responses, so create/list → get → update → delete flows work without manual copy-paste.
+
 ---
 
 Next: [API Reference](api)
