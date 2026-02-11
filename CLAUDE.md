@@ -13,7 +13,7 @@ See `docs/implementation-plan.md` for the full implementation plan and architect
 - **Endpoints:** `/links` (CRUD; reads public, writes protected), `/feed` (public RSS 2.0), `/health` (public)
 - **Auth:** Single-user, global `ApiKeyGuard` via `APP_GUARD`. Write endpoints require `x-api-key` header matching `API_KEY` env var. Public routes use `@Public()` decorator to opt out. See `src/auth/`.
 - **Data model:** `links` table in Supabase (id, url, title, summary, created_at, updated_at)
-- **Deploy:** AWS App Runner via source code (`apprunner.yaml`)
+- **Deploy:** AWS App Runner (manual console config; `apprunner.yaml` is reference only). Production URL: `api.linkblog.in`
 
 ## Commands
 
@@ -57,6 +57,7 @@ AppModule
 
 - All code changes must reference a GitHub issue. Check `gh issue list` before starting work.
 - Use `oxlint` for linting and formatting.
+- CI runs on PRs to `main` (`.github/workflows/ci.yml`): install, lint, fmt:check, build, test.
 
 ## Testing (Jest)
 
@@ -74,6 +75,7 @@ AppModule
 
 ## Gotchas
 
+- App Runner "config from repository" mode hides the env var UI in console. Use manual config to set secrets.
 - Use `pnpx` (not `npx`) for one-off package execution — matches `pnpm` package manager.
 - `but commit` uses `-p <cli-id>` (or `--changes`) to commit specific files, not `--files` or `-F`.
 - GitHub repo: `vidluther/linkblog` - use with `gh` commands.
