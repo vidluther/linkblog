@@ -4,8 +4,6 @@ title: Getting Started
 toc: true
 ---
 
-# Getting Started
-
 ## Prerequisites
 
 - **Node.js** 20+ and **pnpm**

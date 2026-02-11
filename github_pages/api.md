@@ -4,8 +4,6 @@ title: API Reference
 toc: true
 ---
 
-# API Reference
-
 Base URL: `http://localhost:3000` (local) or your deployed App Runner URL.
 
 > **Tip:** A ready-to-use Postman collection is available in `postman/collection.json` with pre-built requests, test scripts, and a CRUD workflow runner. See [Getting Started](getting-started#using-postman) for setup.
