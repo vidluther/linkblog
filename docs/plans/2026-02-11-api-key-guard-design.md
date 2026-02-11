@@ -9,15 +9,15 @@ Secure by default using NestJS's global guard system. Every route is protected u
 
 ## Files
 
-| File | Action | Purpose |
-|------|--------|---------|
-| `src/auth/api-key.guard.ts` | Create | Guard implementation |
-| `src/auth/public.decorator.ts` | Create | `@Public()` decorator to opt out of auth |
-| `src/auth/auth.module.ts` | Create | Registers guard globally via `APP_GUARD` |
-| `src/app.module.ts` | Modify | Import `AuthModule` |
-| `src/links/links.controller.ts` | Modify | Add `@Public()` to GET routes |
-| `src/feed/feed.controller.ts` | Modify | Add `@Public()` to feed route |
-| `src/app.controller.ts` | Modify | Add `@Public()` to health/root route |
+| File                            | Action | Purpose                                  |
+| ------------------------------- | ------ | ---------------------------------------- |
+| `src/auth/api-key.guard.ts`     | Create | Guard implementation                     |
+| `src/auth/public.decorator.ts`  | Create | `@Public()` decorator to opt out of auth |
+| `src/auth/auth.module.ts`       | Create | Registers guard globally via `APP_GUARD` |
+| `src/app.module.ts`             | Modify | Import `AuthModule`                      |
+| `src/links/links.controller.ts` | Modify | Add `@Public()` to GET routes            |
+| `src/feed/feed.controller.ts`   | Modify | Add `@Public()` to feed route            |
+| `src/app.controller.ts`         | Modify | Add `@Public()` to health/root route     |
 
 ## Guard Logic
 

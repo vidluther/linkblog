@@ -6,6 +6,7 @@ import { SupabaseModule } from './supabase/supabase.module.js';
 import { LinksModule } from './links/links.module';
 import { FeedModule } from './feed/feed.module';
 import { AuthModule } from './auth/auth.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
     LinksModule,
     FeedModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -13,7 +13,7 @@ See `docs/implementation-plan.md` for the full implementation plan and architect
 - **Endpoints:** `/links` (CRUD; reads public, writes protected), `/feed` (public RSS 2.0), `/health` (public)
 - **Auth:** Single-user, global `ApiKeyGuard` via `APP_GUARD`. Write endpoints require `x-api-key` header matching `API_KEY` env var. Public routes use `@Public()` decorator to opt out. See `src/auth/`.
 - **Data model:** `links` table in Supabase (id, url, title, summary, created_at, updated_at)
-- **Deploy:** AWS App Runner via Docker
+- **Deploy:** AWS App Runner via source code (`apprunner.yaml`)
 
 ## Commands
 
@@ -45,7 +45,8 @@ AppModule
 ├── SupabaseModule     (global, provides SUPABASE_CLIENT token)
 ├── AuthModule         (global ApiKeyGuard via APP_GUARD)
 ├── LinksModule        (CRUD service + controller)
-└── FeedModule         (RSS feed generation)
+├── FeedModule         (RSS feed generation)
+└── HealthModule       (GET /health for App Runner)
 ```
 
 ## GitHub Pages

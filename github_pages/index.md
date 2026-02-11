@@ -3,7 +3,6 @@ layout: home
 title: Linkblog
 ---
 
-
 A personal bookmarking API built with **NestJS**, **TypeScript**, and **Supabase**. It stores articles with notes and publishes them as a public **RSS 2.0 feed** for the blogroll at [luther.io/blogroll](https://luther.io/blogroll).
 
 ## What It Does
@@ -22,14 +21,14 @@ A personal bookmarking API built with **NestJS**, **TypeScript**, and **Supabase
 
 ## Tech Stack
 
-| Layer       | Technology                                          |
-| ----------- | --------------------------------------------------- |
-| Runtime     | [Node.js](https://nodejs.org/) + TypeScript         |
-| Framework   | [NestJS](https://nestjs.com/) 11.x                 |
-| Database    | [Supabase](https://supabase.com/) (Postgres)        |
-| Hosting     | AWS App Runner (Docker)                              |
-| Feed Format | RSS 2.0                                              |
-| Linting     | [oxlint](https://oxc.rs/)                           |
+| Layer       | Technology                                   |
+| ----------- | -------------------------------------------- |
+| Runtime     | [Node.js](https://nodejs.org/) + TypeScript  |
+| Framework   | [NestJS](https://nestjs.com/) 11.x           |
+| Database    | [Supabase](https://supabase.com/) (Postgres) |
+| Hosting     | AWS App Runner (Docker)                      |
+| Feed Format | RSS 2.0                                      |
+| Linting     | [oxlint](https://oxc.rs/)                    |
 
 ## Source Code
 
