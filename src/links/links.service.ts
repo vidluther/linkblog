@@ -2,6 +2,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { SUPABASE_CLIENT } from '../supabase/supabase.module.js';
@@ -14,8 +15,20 @@ export class LinksService {
     @Inject(SUPABASE_CLIENT) private readonly supabase: SupabaseClient,
   ) {}
 
-  create(createLinkDto: CreateLinkDto) {
-    return 'This action adds a new link';
+  async create(createLinkDto: CreateLinkDto) {
+    console.log('Adding link:', createLinkDto);
+
+    const { data, error } = await this.supabase
+      .from('links')
+      .insert(createLinkDto)
+      .select()
+      .single();
+
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+
+    return data;
   }
 
   async findAll() {
@@ -31,15 +44,54 @@ export class LinksService {
     return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} link`;
+  async findOne(id: number) {
+    const { data, error } = await this.supabase
+      .from('links')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        throw new NotFoundException(`Link #${id} not found`);
+      }
+      throw new InternalServerErrorException(error.message);
+    }
+
+    return data;
   }
 
-  update(id: number, updateLinkDto: UpdateLinkDto) {
-    return `This action updates a #${id} link`;
+  async update(id: number, updateLinkDto: UpdateLinkDto) {
+    const { data, error } = await this.supabase
+      .from('links')
+      .update({ ...updateLinkDto, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        throw new NotFoundException(`Link #${id} not found`);
+      }
+      throw new InternalServerErrorException(error.message);
+    }
+
+    return data;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} link`;
+  async remove(id: number) {
+    const { error } = await this.supabase
+      .from('links')
+      .delete()
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        throw new NotFoundException(`Link #${id} not found`);
+      }
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }
