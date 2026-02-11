@@ -10,10 +10,18 @@ See `docs/implementation-plan.md` for the full implementation plan and architect
 
 ## Key Conventions
 
-- **Endpoints:** `/links` (CRUD, API key protected), `/feed` (public RSS 2.0), `/health` (public)
+- **Endpoints:** `/links` (CRUD; reads public, writes protected), `/feed` (public RSS 2.0), `/health` (public)
 - **Auth:** Single-user, global `ApiKeyGuard` via `APP_GUARD`. Write endpoints require `x-api-key` header matching `API_KEY` env var. Public routes use `@Public()` decorator to opt out. See `src/auth/`.
 - **Data model:** `links` table in Supabase (id, url, title, summary, created_at, updated_at)
 - **Deploy:** AWS App Runner via Docker
+
+## Commands
+
+- `pnpm start:dev` — dev server with hot reload
+- `pnpm build` — production build
+- `pnpm test` — run all tests. `pnpm test <pattern>` to filter (e.g. `pnpm test auth`).
+- `pnpm lint` / `pnpm lint:fix` — oxlint
+- `pnpm fmt` / `pnpm fmt:check` — oxfmt
 
 ## Environment Variables
 
@@ -24,26 +32,25 @@ See `docs/implementation-plan.md` for the full implementation plan and architect
 
 ## Supabase JS Client (`@supabase/supabase-js`)
 
-- **Version:** v2.x (latest)
-- **Init:** `createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, options)` — use generated types for full type safety
-- **Type generation:** `npx supabase gen types typescript --project-id <ref> > database.types.ts`
-- **Server-side options:** Disable auth features not needed in a backend service:
-  ```ts
-  createClient<Database>(url, key, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  })
-  ```
-- **Query patterns (all return `{ data, error }`):**
-  - Select: `supabase.from('links').select('*').order('created_at', { ascending: false })`
-  - Select one: `supabase.from('links').select('*').eq('id', id).single()`
-  - Insert: `supabase.from('links').insert({ url, title, summary }).select()`
-  - Update: `supabase.from('links').update({ title, updated_at: new Date().toISOString() }).eq('id', id).select()`
-  - Delete: `supabase.from('links').delete().eq('id', id)`
-  - Upsert: `supabase.from('links').upsert(row, { onConflict: 'id' }).select()`
-  - Count: `supabase.from('links').select('*', { count: 'exact', head: false })`
-- **Filters:** `.eq()`, `.neq()`, `.gt()`, `.gte()`, `.lt()`, `.lte()`, `.like()`, `.ilike()`, `.in()`
-- **Pagination:** `.order(column, { ascending })`, `.limit(n)`, `.range(from, to)`
-- **Error handling:** Always check `error` before using `data` — errors are returned, not thrown
+- v2.x via `@supabase/supabase-js`. Use Context7 for query API reference.
+- **Type generation:** `pnpx supabase gen types typescript --project-id <ref> > database.types.ts`
+- **Init:** disable `autoRefreshToken` and `persistSession` (server-side, no browser sessions). See `src/supabase/supabase.module.ts`.
+- **Error handling:** All queries return `{ data, error }` — always check `error` before using `data`.
+
+## Module Structure
+
+```
+AppModule
+├── ConfigModule       (global, loads .env)
+├── SupabaseModule     (global, provides SUPABASE_CLIENT token)
+├── AuthModule         (global ApiKeyGuard via APP_GUARD)
+├── LinksModule        (CRUD service + controller)
+└── FeedModule         (RSS feed generation)
+```
+
+## GitHub Pages
+
+- `github_pages/` — Jekyll site using Minimal Mistakes (air skin), deployed via GitHub Actions to `docs.linkblog.in`
 
 ## Workflow
 
@@ -52,7 +59,6 @@ See `docs/implementation-plan.md` for the full implementation plan and architect
 
 ## Testing (Jest)
 
-- `pnpm test` — run all tests. `pnpm test <pattern>` to filter by path (e.g. `pnpm test auth`).
 - Mock Supabase with a chainable object (`from/select/insert/update/delete/eq/order/single` all return `this`).
 - Use `Reflect.getMetadata(KEY, handler)` to verify decorator presence on controller methods.
 
