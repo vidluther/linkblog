@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: single
 title: Architecture
+toc: true
 ---
 
 # Architecture

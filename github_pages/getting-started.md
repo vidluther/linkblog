@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: single
 title: Getting Started
+toc: true
 ---
 
 # Getting Started
@@ -110,8 +111,8 @@ Once the server is running:
 # Health check
 curl http://localhost:3000/health
 
-# List links (requires API key)
-curl -H "x-api-key: your-api-key" http://localhost:3000/links
+# List links (public)
+curl http://localhost:3000/links
 
 # RSS feed (public)
 curl http://localhost:3000/feed

@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: single
 title: API Reference
+toc: true
 ---
 
 # API Reference
@@ -19,9 +20,7 @@ x-api-key: your-api-key
 
 The key is compared against the `API_KEY` environment variable. Requests with a missing or incorrect key receive a `401 Unauthorized` response.
 
-Read endpoints (`GET /links`, `GET /links/:id`) are also protected by the API key.
-
-The RSS feed (`GET /feed`) and health check (`GET /health`) are **public**.
+Read endpoints (`GET /links`, `GET /links/:id`), the RSS feed (`GET /feed`), and the health check (`GET /health`) are **public** — no API key required.
 
 ---
 
@@ -91,10 +90,10 @@ curl -X POST http://localhost:3000/links \
 
 List all links, sorted by newest first.
 
-**Auth:** `x-api-key` header required
+**Auth:** None
 
 ```bash
-curl -H "x-api-key: your-api-key" http://localhost:3000/links
+curl http://localhost:3000/links
 ```
 
 **Response:** `200 OK`
@@ -126,10 +125,10 @@ curl -H "x-api-key: your-api-key" http://localhost:3000/links
 
 Get a single link by ID.
 
-**Auth:** `x-api-key` header required
+**Auth:** None
 
 ```bash
-curl -H "x-api-key: your-api-key" http://localhost:3000/links/1
+curl http://localhost:3000/links/1
 ```
 
 **Response:** `200 OK`
