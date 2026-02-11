@@ -21,3 +21,24 @@ My goal is to learn TypeScript, and NestJS along with Supabase. So..
 - TypeScript
 - NestJS
 - Supabase
+- AWS App Runner
+
+### Supabase Migrations
+
+Link the CLI to your Supabase project (one-time):
+
+```bash
+pnpx supabase link --project-ref <your-project-ref>
+```
+
+Apply pending migrations to the remote database:
+
+```bash
+pnpx supabase db push
+```
+
+Reset the remote database (destructive — drops all tables, re-runs migrations + seed):
+
+```bash
+pnpx supabase db reset --linked
+```
