@@ -4,8 +4,8 @@ url: https://www.linkblog.in
 baseurl: ''
 
 remote_theme: "mmistakes/minimal-mistakes"
-markdown: kramdown
-highlighter: rouge
+#markdown: kramdown
+#highlighter: rouge
 
 ## Minimal Mistakes configuration
 breadcrumbs: true  # disabled by default
