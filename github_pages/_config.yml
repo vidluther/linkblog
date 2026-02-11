@@ -1,11 +1,11 @@
-remote_theme: "mmistakes/minimal-mistakes"
-minimal_mistakes_skin: "air"
+# remote_theme: "mmistakes/minimal-mistakes"
+# minimal_mistakes_skin: "air"
 
 title: Linkblog
-subtitle: "API Documentation"
+subtitle: 'API Documentation'
 description: A personal bookmarking API that publishes an RSS feed
 url: https://www.linkblog.in
-baseurl: ""
+baseurl: ''
 
 markdown: kramdown
 highlighter: rouge
@@ -17,6 +17,6 @@ breadcrumbs: true
 
 defaults:
   - scope:
-      path: ""
+      path: ''
     values:
-      layout: "single"
+      layout: 'single'
