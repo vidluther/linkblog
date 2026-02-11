@@ -103,6 +103,10 @@ The API is meant to be called from scripts, iOS shortcuts, or CLI tools. A front
 ```
 linkblog/
 ├── docs/                  # GitHub Pages documentation
+├── postman/
+│   ├── collection.json    # Postman collection (all endpoints + tests)
+│   ├── environment.json   # "Linkblog - Local" environment
+│   └── specs/             # API specs (planned)
 ├── src/
 │   ├── main.ts            # Bootstrap and start server
 │   ├── app.module.ts      # Root module
