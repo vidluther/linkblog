@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { LinksService } from './links.service';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
+import { Public } from '../auth/public.decorator';
 
 @Controller('links')
 export class LinksController {
@@ -12,11 +13,13 @@ export class LinksController {
     return this.linksService.create(createLinkDto);
   }
 
+  @Public()
   @Get()
   findAll() {
     return this.linksService.findAll();
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.linksService.findOne(+id);
