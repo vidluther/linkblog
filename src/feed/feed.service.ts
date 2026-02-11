@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Feed } from 'feed';
 import { LinksService } from '../links/links.service';
 
 @Injectable()
@@ -7,6 +6,7 @@ export class FeedService {
   constructor(private readonly linksService: LinksService) {}
 
   async generateRssFeed(): Promise<string> {
+    const { Feed } = await import('feed');
     const links = await this.linksService.findAll();
 
     const feed = new Feed({

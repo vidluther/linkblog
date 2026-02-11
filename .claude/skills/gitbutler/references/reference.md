@@ -143,7 +143,6 @@ but pick <commit-sha>                # Auto-select target if only one branch
 ```
 
 The source can be:
-
 - A commit SHA (full or short)
 - A CLI ID from `but status`
 - An unapplied branch name (shows interactive commit picker)
@@ -183,6 +182,7 @@ Commit changes to a branch.
 but commit <branch> --only -m "message"  # Commit ONLY staged changes (recommended)
 but commit <branch> -m "message"         # Commit ALL uncommitted changes to branch
 but commit <branch> -m "message" --changes <id>,<id>  # Commit specific files or hunks by CLI ID
+but commit <branch> -m "message" --changes <id> --changes <id>  # Alternative: repeat flag
 but commit <branch> --message-file msg.txt  # Read commit message from file
 but commit <branch> -i                   # AI-generated commit message
 but commit <branch> -i="fix the auth bug"  # AI-generated with instructions (equals sign required)
@@ -196,9 +196,9 @@ but commit empty --after <target>        # Insert empty commit after target
 **Important:** Without `--only`, ALL uncommitted changes are committed to the branch, not just staged files. Use `--only` when you've staged specific files and want to commit only those.
 
 **Committing specific files or hunks:** Use `--changes` (or `-p`) with comma-separated CLI IDs to commit only those files or hunks:
-
 - **File IDs** from `but status --json`: commits entire files
 - **Hunk IDs** from `but diff --json`: commits individual hunks
+- `--changes` takes one argument per flag. Use `--changes a1,b2` or `--changes a1 --changes b2`, not `--changes a1 b2`.
 
 **Note:** `--changes` and `--only` are mutually exclusive.
 
@@ -296,7 +296,6 @@ but amend <file-id> <commit-id> --status-after   # Amend then show workspace sta
 ```
 
 **When to use `amend` vs `absorb`:**
-
 - `but amend` - You know the target commit; explicit control
 - `but absorb` - Let GitButler auto-detect the target; smart matching based on dependencies
 
