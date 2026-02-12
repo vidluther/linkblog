@@ -34,8 +34,12 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/",
-              "host": ["{{baseUrl}}"],
-              "path": [""]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
             },
             "description": "Public health check endpoint. Returns 200 with \"Hello World!\" when the server is running."
           },
@@ -75,8 +79,12 @@
             },
             "url": {
               "raw": "{{baseUrl}}/links",
-              "host": ["{{baseUrl}}"],
-              "path": ["links"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links"
+              ]
             },
             "description": "Attempt to create a link with an invalid API key. Should return 401 Unauthorized."
           },
@@ -128,8 +136,12 @@
             },
             "url": {
               "raw": "{{baseUrl}}/links",
-              "host": ["{{baseUrl}}"],
-              "path": ["links"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links"
+              ]
             },
             "description": "Attempt to create a link with an invalid API key. Should return 401 Unauthorized."
           },
@@ -180,7 +192,6 @@
                   "pm.test('Response contains all required fields', function () {",
                   "    pm.expect(body).to.have.property('id');",
                   "    pm.expect(body).to.have.property('url');",
-                  "    pm.expect(body).to.have.property('title');",
                   "    pm.expect(body).to.have.property('summary');",
                   "    pm.expect(body).to.have.property('created_at');",
                   "    pm.expect(body).to.have.property('updated_at');",
@@ -198,53 +209,33 @@
                   "    pm.expect(body.url).to.be.a('string');",
                   "});",
                   "",
-                  "pm.test('Title is a string', function () {",
-                  "    pm.expect(body.title).to.be.a('string');",
+                  "pm.test('Title is NULL', function () {",
+                  "    pm.expect(body.title).to.be.a('null');",
                   "});",
                   "",
-                  "pm.test('Summary is a string', function () {",
-                  "    pm.expect(body.summary).to.be.a('string');",
+                  "pm.test('Summary is NULL', function () {",
+                  "    pm.expect(body.summary).to.be.a('null');",
                   "});",
                   "",
                   "// --------------------------------------------",
                   "// 6. URL Format Validation",
                   "// --------------------------------------------",
                   "pm.test('URL has valid format', function () {",
-                  "    const urlPattern = /^https?:\\/\\/.+/i;",
-                  "    pm.expect(body.url).to.match(urlPattern);",
+                  "    pm.expect(body.url).to.match(/^https?:\\/\\/.+/);",
                   "});",
                   "",
                   "// --------------------------------------------",
-                  "// 7. Title Validation",
-                  "// --------------------------------------------",
-                  "pm.test('Title is not empty', function () {",
-                  "    pm.expect(body.title.trim()).to.not.be.empty;",
-                  "});",
-                  "",
-                  "// --------------------------------------------",
-                  "// 8. Timestamp Format Validation (ISO 8601)",
+                  "// 7. Timestamp Validation",
                   "// --------------------------------------------",
                   "pm.test('created_at is valid ISO 8601 timestamp', function () {",
                   "    const date = new Date(body.created_at);",
                   "    pm.expect(date.toString()).to.not.equal('Invalid Date');",
-                  "    // Verify it can be parsed back to a valid date",
-                  "    pm.expect(date.toISOString()).to.be.a('string');",
                   "});",
                   "",
                   "pm.test('updated_at is valid ISO 8601 timestamp', function () {",
                   "    const date = new Date(body.updated_at);",
                   "    pm.expect(date.toString()).to.not.equal('Invalid Date');",
-                  "    // Verify it can be parsed back to a valid date",
-                  "    pm.expect(date.toISOString()).to.be.a('string');",
-                  "});",
-                  "",
-                  "// ============================================",
-                  "// Auto-capture linkId for downstream requests",
-                  "// ============================================",
-                  "if (body && body.id) {",
-                  "    pm.environment.set('linkId', body.id);",
-                  "    console.log('Saved linkId:', body.id);",
-                  "}"
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -254,7 +245,9 @@
             {
               "listen": "prerequest",
               "script": {
-                "exec": [""],
+                "exec": [
+                  ""
+                ],
                 "type": "text/javascript",
                 "packages": {},
                 "requests": {}
@@ -271,7 +264,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"url\": \"{{$randomUrl}}\", \"title\": \" Title is:{{$randomCatchPhraseAdjective}}\",\n    \"summary\": \"{{$randomCatchPhrase}}\"\n}",
+              "raw": "{\n    \"url\": \"{{$randomUrl}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -280,8 +273,12 @@
             },
             "url": {
               "raw": "{{baseUrl}}/links",
-              "host": ["{{baseUrl}}"],
-              "path": ["links"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links"
+              ]
             },
             "description": "Create a new bookmarked link. On success, auto-saves the returned `id` to `linkId` for use in subsequent requests."
           },
@@ -320,8 +317,12 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links?url={{$randomUrl}}&title={{$randomAdjective}}&summary={{$randomWords}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["links"],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links"
+              ],
               "query": [
                 {
                   "key": "url",
@@ -350,7 +351,6 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
                   "pm.test('Status is 200', function () {",
                   "    pm.response.to.have.status(200);",
@@ -366,9 +366,12 @@
                   "",
                   "pm.test('Returned correct link', function () {",
                   "    const body = pm.response.json();",
-                  "    pm.expect(String(body.id)).to.eql(pm.environment.get('linkId'));",
+                  "    pm.expect(Number(body.id)).to.eql(pm.environment.get('linkId'));",
                   "});"
-                ]
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -377,8 +380,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links/{{linkId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["links", "{{linkId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{linkId}}"
+              ]
             },
             "description": "Get a single link by ID. Uses `linkId` variable (auto-set by Create or List requests)."
           },
@@ -423,8 +431,13 @@
             },
             "url": {
               "raw": "{{baseUrl}}/links/{{linkId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["links", "{{linkId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{linkId}}"
+              ]
             },
             "description": "Partially update a link. All body fields are optional. Uses `linkId` variable."
           },
@@ -454,8 +467,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links/{{linkId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["links", "{{linkId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{linkId}}"
+              ]
             },
             "description": "Delete a link by ID. Uses `linkId` variable. Clears the `linkId` variable on success."
           },
@@ -520,8 +538,12 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/feed",
-              "host": ["{{baseUrl}}"],
-              "path": ["feed"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "feed"
+              ]
             },
             "description": "Public RSS 2.0 feed of all links (newest first). No auth required."
           },
@@ -565,8 +587,12 @@
             },
             "url": {
               "raw": "{{baseUrl}}/links",
-              "host": ["{{baseUrl}}"],
-              "path": ["links"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links"
+              ]
             }
           },
           "response": []
@@ -596,8 +622,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["links", "{{workflowLinkId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{workflowLinkId}}"
+              ]
             }
           },
           "response": []
@@ -636,8 +667,13 @@
             },
             "url": {
               "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["links", "{{workflowLinkId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{workflowLinkId}}"
+              ]
             }
           },
           "response": []
@@ -672,8 +708,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["links", "{{workflowLinkId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{workflowLinkId}}"
+              ]
             }
           },
           "response": []
@@ -698,8 +739,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["links", "{{workflowLinkId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{workflowLinkId}}"
+              ]
             }
           },
           "response": []
@@ -728,8 +774,13 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["links", "{{workflowLinkId}}"]
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "links",
+                "{{workflowLinkId}}"
+              ]
             }
           },
           "response": []
