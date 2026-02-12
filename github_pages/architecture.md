@@ -52,7 +52,7 @@ The root module. Imports `ConfigModule.forRoot({ isGlobal: true })` so environme
 
 ### SupabaseModule
 
-A `@Global()` module that creates and exports a configured `SupabaseClient`. It uses `ConfigService` to read `SUPABASE_URL` and `SUPABASE_ANON_KEY`, and disables `autoRefreshToken` and `persistSession` since this is a server-side app with no browser sessions.
+A `@Global()` module that creates and exports a configured `SupabaseClient`. It uses `ConfigService` to read `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`, and disables `autoRefreshToken` and `persistSession` since this is a server-side app with no browser sessions.
 
 The client is provided under the `SUPABASE_CLIENT` injection token.
 
