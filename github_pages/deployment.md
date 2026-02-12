@@ -60,12 +60,12 @@ docker run -p 3000:3000 \
 
 Configure these in the App Runner service settings:
 
-| Variable            | Description                        |
-| ------------------- | ---------------------------------- |
-| `SUPABASE_URL`      | Supabase project URL               |
-| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key      |
-| `API_KEY`           | Secret key for write endpoints     |
-| `PORT`              | App Runner sets this automatically |
+| Variable                   | Description                        |
+| -------------------------- | ---------------------------------- |
+| `SUPABASE_URL`             | Supabase project URL               |
+| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key           |
+| `API_KEY`                  | Secret key for write endpoints     |
+| `PORT`                     | App Runner sets this automatically |
 
 ### Health Check
 

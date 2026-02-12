@@ -93,6 +93,7 @@ Build: `pnpm build:extension`. Clean build: `pnpm clean:extension`. Source in `b
 - GitHub repo: `vidluther/linkblog` - use with `gh` commands.
 
 ## Tool Preferences
+
 - Use `rg` (ripgrep) for searching file contents and finding files, not `find` or `grep`
 - Use `but` (GitButler CLI) instead of `git` for all version control operations
 - Use `pnpm` instead of `npm`, `yarn`, or `bun` for package management

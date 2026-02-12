@@ -29,12 +29,12 @@ API_KEY=a-secret-key-for-write-endpoints
 PORT=3000
 ```
 
-| Variable            | Description                                     |
-| ------------------- | ----------------------------------------------- |
-| `SUPABASE_URL`      | Your Supabase project URL                       |
-| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key                   |
-| `API_KEY`           | Protects write endpoints via `x-api-key` header |
-| `PORT`              | Server port (defaults to `3000`)                |
+| Variable                   | Description                                     |
+| -------------------------- | ----------------------------------------------- |
+| `SUPABASE_URL`             | Your Supabase project URL                       |
+| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key                        |
+| `API_KEY`                  | Protects write endpoints via `x-api-key` header |
+| `PORT`                     | Server port (defaults to `3000`)                |
 
 ## Database Setup
 

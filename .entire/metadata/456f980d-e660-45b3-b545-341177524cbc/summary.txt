@@ -1,7 +1,0 @@
-All 5 tests pass. The fix is complete:
-
-- **Changed**: `src/feed/feed.service.ts` — replaced the static `import { Feed } from 'feed'` with a dynamic `const { Feed } = await import('feed')` inside the `generateRssFeed()` method
-- **Build**: Compiled output correctly emits `await import('feed')` instead of `require("feed")`
-- **Tests**: All 3 test suites (5 tests) pass
-
-Want me to commit this using GitButler?
