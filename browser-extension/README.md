@@ -78,6 +78,7 @@ browser-extension/
 The extension POSTs to your linkblog API endpoint (default: `https://api.linkblog.in/links`).
 
 **Success response:**
+
 ```json
 {
   "id": 17,
@@ -90,6 +91,7 @@ The extension POSTs to your linkblog API endpoint (default: `https://api.linkblo
 ```
 
 **Error response:**
+
 ```json
 {
   "message": ["url must be a URL address"],

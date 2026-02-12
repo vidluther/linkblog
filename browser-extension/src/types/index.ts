@@ -14,7 +14,7 @@ export interface LinkblogErrorResponse {
 }
 
 export interface SaveLinkRequest {
-  type: "SAVE_LINK";
+  type: 'SAVE_LINK';
   url: string;
 }
 
@@ -30,6 +30,6 @@ export interface ExtensionSettings {
 }
 
 export const DEFAULT_SETTINGS: ExtensionSettings = {
-  apiKey: "",
-  apiEndpoint: "https://api.linkblog.in/links",
+  apiKey: '',
+  apiEndpoint: 'https://api.linkblog.in/links',
 };
