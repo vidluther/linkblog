@@ -18,6 +18,10 @@ const saveSettingsBtn = document.getElementById(
 const settingsMessageEl = document.getElementById(
   'settings-message',
 ) as HTMLDivElement;
+const titleInput = document.getElementById('link-title') as HTMLInputElement;
+const summaryInput = document.getElementById(
+  'link-summary',
+) as HTMLTextAreaElement;
 
 let activeTabUrl = '';
 
@@ -38,6 +42,9 @@ async function loadActiveTab(): Promise<void> {
   if (tab?.url) {
     activeTabUrl = tab.url;
     currentUrlEl.textContent = tab.url;
+    if (tab.title) {
+      titleInput.value = tab.title;
+    }
   } else {
     currentUrlEl.textContent = 'No URL available';
     saveBtn.disabled = true;
@@ -61,9 +68,14 @@ async function handleSaveLink(): Promise<void> {
   saveBtn.disabled = true;
   saveBtn.textContent = 'Saving...';
 
+  const title = titleInput.value.trim() || undefined;
+  const summary = summaryInput.value.trim() || undefined;
+
   const result: SaveLinkResult = await browser.runtime.sendMessage({
     type: 'SAVE_LINK',
     url: activeTabUrl,
+    title,
+    summary,
   });
 
   saveBtn.disabled = false;

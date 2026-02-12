@@ -55,6 +55,7 @@ label {
   margin-top: 10px;
 }
 
+input[type='text'],
 input[type='password'],
 input[type='url'] {
   width: 100%;
@@ -68,6 +69,24 @@ input[type='url'] {
 }
 
 input:focus {
+  border-color: #4fc3f7;
+}
+
+textarea {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 13px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #16213e;
+  color: #e0e0e0;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+textarea:focus {
   border-color: #4fc3f7;
 }
 

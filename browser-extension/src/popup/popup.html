@@ -12,6 +12,21 @@
 
       <div id="status-section" class="section">
         <div id="current-url" class="url-display">Loading...</div>
+
+        <label for="link-title">Title</label>
+        <input
+          type="text"
+          id="link-title"
+          placeholder="Page title (optional)"
+        />
+
+        <label for="link-summary">Summary</label>
+        <textarea
+          id="link-summary"
+          placeholder="Add notes about this link (optional)"
+          rows="3"
+        ></textarea>
+
         <button id="save-btn" class="btn btn-primary">Save to Linkblog</button>
         <div id="status-message" class="status-message hidden"></div>
       </div>
