@@ -49,7 +49,7 @@ supabase/.temp
 docker build -t linkblog .
 docker run -p 3000:3000 \
   -e SUPABASE_URL=https://your-project.supabase.co \
-  -e SUPABASE_ANON_KEY=your-anon-key \
+  -e SUPABASE_PUBLISHABLE_KEY=your-publishable-key \
   -e API_KEY=your-api-key \
   linkblog
 ```
@@ -63,7 +63,7 @@ Configure these in the App Runner service settings:
 | Variable            | Description                        |
 | ------------------- | ---------------------------------- |
 | `SUPABASE_URL`      | Supabase project URL               |
-| `SUPABASE_ANON_KEY` | Supabase anonymous key             |
+| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key      |
 | `API_KEY`           | Secret key for write endpoints     |
 | `PORT`              | App Runner sets this automatically |
 

@@ -1,0 +1,77 @@
+Implement the following plan:
+
+# Fix `feed` ESM-only package incompatibility
+
+## Context
+
+`pnpm start:dev` fails because the `feed` npm package v5.2.0 is **ESM-only** (`"type": "module"`, only exports via `export { Feed }`), but the project compiles to CommonJS (no `"type": "module"` in package.json). TypeScript with `"module": "nodenext"` emits `require("feed")` which Node.js cannot resolve against an ESM-only package, producing an `ERR_REQUIRE_ESM` error.
+
+## Approach: Dynamic `import()`
+
+Replace the static `import { Feed } from 'feed'` with a dynamic `const { Feed } = await import('feed')` inside the async method. This is the smallest possible fix:
+
+- **Only 1 file changes** — no tsconfig, package.json, or build config modifications
+- **Works because** CommonJS code can use `import()` to load ESM modules; TypeScript preserves `import()` as-is in CJS output
+- **No perf cost** — Node.js caches ESM modules after first load; subsequent `import('feed')` calls are instant
+- The method is already `async`, so no structural change needed
+
+### Why not other approaches?
+- **Convert project to ESM** — NestJS + decorators + Jest in ESM mode has known rough edges; too much risk/churn for one dependency
+- **Switch to SWC** — Overkill; doesn't guarantee the fix; SWC lacks `emitDecoratorMetadata`
+- **Replace `feed` with `rss` package** — Works but avoids the real problem; `feed` has a richer API
+
+## Changes
+
+### 1. Modify `src/feed/feed.service.ts`
+
+Remove the static import and use dynamic import inside the method:
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { LinksService } from '../links/links.service';
+
+@Injectable()
+export class FeedService {
+  constructor(private readonly linksService: LinksService) {}
+
+  async generateRssFeed(): Promise<string> {
+    const { Feed } = await import('feed');
+    const links = await this.linksService.findAll();
+
+    const feed = new Feed({
+      title: 'Linkblog',
+      description: 'Links worth reading',
+      id: 'https://luther.io/blogroll',
+      link: 'https://luther.io/blogroll',
+      language: 'en',
+      copyright: '',
+    });
+
+    for (const link of links ?? []) {
+      feed.addItem({
+        title: link.title,
+        id: link.url,
+        link: link.url,
+        description: link.summary ?? '',
+        date: new Date(link.created_at),
+      });
+    }
+
+    return feed.rss2();
+  }
+}
+```
+
+### 2. (Optional) Add `src/feed/feed.service.spec.ts`
+
+Add a unit test that exercises the dynamic import path and validates RSS output.
+
+## Verification
+
+1. `pnpm build` — inspect `dist/feed/feed.service.js` to confirm `await import('feed')` (not `require("feed")`)
+2. `pnpm start:dev` — confirm server starts without `ERR_REQUIRE_ESM`
+3. `curl http://localhost:3000/feed` — confirm valid RSS XML response
+4. `pnpm test` — confirm all tests pass
+
+
+If you need specific details from before exiting plan mode (like exact code snippets, error messages, or content you generated), read the full transcript at: /Users/vluther/.claude/projects/-Users-vluther-work-personal-linkblog/b5793571-92ae-4fb9-8119-e9a2c622e03c.jsonl

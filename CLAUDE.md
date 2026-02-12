@@ -4,7 +4,8 @@ Always use Context7 MCP when I need library/API documentation, code generation, 
 
 # Project
 
-Linkblog Service - a personal bookmarking API (NestJS + TypeScript + Supabase) that publishes an RSS feed for luther.io/blogroll.
+Linkblog Service - a personal bookmarking API (NestJS + TypeScript + Supabase) that publishes an RSS feed.
+Monorepo managed with pnpm workspaces.
 
 See `docs/implementation-plan.md` for the full implementation plan and architecture.
 
@@ -22,11 +23,12 @@ See `docs/implementation-plan.md` for the full implementation plan and architect
 - `pnpm test` — run all tests. `pnpm test <pattern>` to filter (e.g. `pnpm test auth`).
 - `pnpm lint` / `pnpm lint:fix` — oxlint
 - `pnpm fmt` / `pnpm fmt:check` — oxfmt
+- `pnpm build:extension` / `pnpm clean:extension` — build or clean the browser extension
 
 ## Environment Variables
 
 - `SUPABASE_URL` - Supabase project URL
-- `SUPABASE_ANON_KEY` - Supabase anonymous key
+- `SUPABASE_PUBLISHABLE_KEY` - Supabase publishable key
 - `API_KEY` - Protects write endpoints via `x-api-key` header
 - `PORT` - Server port (set by App Runner in production)
 
@@ -57,7 +59,8 @@ AppModule
 
 - All code changes must reference a GitHub issue. Check `gh issue list` before starting work.
 - Use `oxlint` for linting and formatting.
-- CI runs on PRs to `main` (`.github/workflows/ci.yml`): install, lint, fmt:check, build, test.
+- CI runs on PRs to `main` (`.github/workflows/ci.yml`): install, lint, fmt:check, build, test, plus extension lint/typecheck/build.
+- Branch protection on `main` requires the `ci` status check to pass before merge.
 
 ## Testing (Jest)
 
@@ -66,7 +69,7 @@ AppModule
 
 ## Testing (Postman)
 
-- `postman/collection.json` — API collection (folders: Health, Links, Feed, CRUD Workflow)
+- `postman/Linkblog API.postman_collection.json` — API collection (folders: Health, Links, Feed, CRUD Workflow)
 - `postman/environment.json` — "Linkblog - Local" env (vars: `baseUrl`, `apiKey`, `linkId`)
 - `postman/specs/` — reserved for API specs
 - Auth edge case tests (no key, wrong key) live in the Health folder, not a separate folder
@@ -75,8 +78,12 @@ AppModule
 
 ## Browser Extension
 
-`browser-extension/` — Chrome MV3 extension (workspace package `linkblog-extension`).
-Build: `pnpm --filter linkblog-extension build`. Source in `browser-extension/src/`.
+`browser-extension/` — Chrome/Safari MV3 extension (workspace package `linkblog-extension`).
+Build: `pnpm build:extension`. Clean build: `pnpm clean:extension`. Source in `browser-extension/src/`.
+
+- Uses `browser.*` namespace with a `globalThis.browser ?? globalThis.chrome` shim for cross-browser compat.
+- Safari: `notifications` API is unsupported; notification calls silently no-op.
+- Root `tsconfig.json` and `tsconfig.build.json` both exclude `browser-extension/` to avoid NestJS compilation conflicts.
 
 ## Gotchas
 
@@ -85,6 +92,7 @@ Build: `pnpm --filter linkblog-extension build`. Source in `browser-extension/sr
 - `but commit` uses `-p <cli-id>` (or `--changes`) to commit specific files, not `--files` or `-F`.
 - GitHub repo: `vidluther/linkblog` - use with `gh` commands.
 
-# Skills
-
-Use the github-issues-first skill before implementing any code changes.
+## Tool Preferences
+- Use `rg` (ripgrep) for searching file contents and finding files, not `find` or `grep`
+- Use `but` (GitButler CLI) instead of `git` for all version control operations
+- Use `pnpm` instead of `npm`, `yarn`, or `bun` for package management

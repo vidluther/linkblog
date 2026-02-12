@@ -24,7 +24,7 @@ Create a `.env` file in the project root:
 
 ```env
 SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_PUBLISHABLE_KEY=your-publishable-key
 API_KEY=a-secret-key-for-write-endpoints
 PORT=3000
 ```
@@ -32,7 +32,7 @@ PORT=3000
 | Variable            | Description                                     |
 | ------------------- | ----------------------------------------------- |
 | `SUPABASE_URL`      | Your Supabase project URL                       |
-| `SUPABASE_ANON_KEY` | Supabase anonymous/public key                   |
+| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key                   |
 | `API_KEY`           | Protects write endpoints via `x-api-key` header |
 | `PORT`              | Server port (defaults to `3000`)                |
 
