@@ -5,13 +5,16 @@ import type {
   ExtensionSettings,
 } from '../types/index.js';
 
+// Chrome exposes `chrome`, Safari/Firefox expose `browser`
+const browser = globalThis.browser ?? globalThis.chrome;
+
 const DEFAULTS: ExtensionSettings = {
   apiKey: '',
   apiEndpoint: 'https://api.linkblog.in/links',
 };
 
 async function getSettings(): Promise<ExtensionSettings> {
-  const result = await chrome.storage.sync.get('settings');
+  const result = await browser.storage.sync.get('settings');
   return { ...DEFAULTS, ...result.settings };
 }
 
@@ -52,7 +55,7 @@ async function saveLink(url: string): Promise<SaveLinkResult> {
 }
 
 async function saveLinkFromActiveTab(): Promise<void> {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
 
   if (!tab?.url) {
     showNotification('Error', 'No URL found for the active tab.');
@@ -69,17 +72,17 @@ async function saveLinkFromActiveTab(): Promise<void> {
 }
 
 function showNotification(title: string, message: string): void {
-  chrome.notifications.create({
+  browser.notifications.create({
     type: 'basic',
-    iconUrl: chrome.runtime.getURL('icons/icon128.png'),
+    iconUrl: browser.runtime.getURL('icons/icon128.png'),
     title: `Linkblog: ${title}`,
     message,
   });
 }
 
 // Context menu setup
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
+browser.runtime.onInstalled.addListener(() => {
+  browser.contextMenus.create({
     id: 'save-to-linkblog',
     title: 'Save to Linkblog',
     contexts: ['page', 'link'],
@@ -87,7 +90,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // Context menu click handler
-chrome.contextMenus.onClicked.addListener(async (info) => {
+browser.contextMenus.onClicked.addListener(async (info) => {
   if (info.menuItemId === 'save-to-linkblog') {
     const url = info.linkUrl ?? info.pageUrl;
     if (url) {
@@ -102,14 +105,14 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
 });
 
 // Keyboard shortcut handler
-chrome.commands.onCommand.addListener(async (command) => {
+browser.commands.onCommand.addListener(async (command) => {
   if (command === 'save-current-page') {
     await saveLinkFromActiveTab();
   }
 });
 
 // Message handler for popup communication
-chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === 'SAVE_LINK') {
     saveLink(message.url).then(sendResponse);
     return true; // keep channel open for async response

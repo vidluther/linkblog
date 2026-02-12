@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Linkblog",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Save links to your linkblog with one click, right-click, or keyboard shortcut",
   "permissions": ["activeTab", "storage", "contextMenus", "notifications"],
   "host_permissions": ["https://api.linkblog.in/*"],
