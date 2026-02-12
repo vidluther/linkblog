@@ -1,5 +1,8 @@
 import type { SaveLinkResult, ExtensionSettings } from '../types/index.js';
 
+// Chrome exposes `chrome`, Safari/Firefox expose `browser`
+const browser = globalThis.browser ?? globalThis.chrome;
+
 const saveBtn = document.getElementById('save-btn') as HTMLButtonElement;
 const currentUrlEl = document.getElementById('current-url') as HTMLDivElement;
 const statusMessageEl = document.getElementById(
@@ -31,7 +34,7 @@ function showStatus(
 }
 
 async function loadActiveTab(): Promise<void> {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
   if (tab?.url) {
     activeTabUrl = tab.url;
     currentUrlEl.textContent = tab.url;
@@ -42,7 +45,7 @@ async function loadActiveTab(): Promise<void> {
 }
 
 async function loadSettings(): Promise<void> {
-  const result = await chrome.storage.sync.get('settings');
+  const result = await browser.storage.sync.get('settings');
   const settings: ExtensionSettings = {
     apiKey: '',
     apiEndpoint: 'https://api.linkblog.in/links',
@@ -58,7 +61,7 @@ async function handleSaveLink(): Promise<void> {
   saveBtn.disabled = true;
   saveBtn.textContent = 'Saving...';
 
-  const result: SaveLinkResult = await chrome.runtime.sendMessage({
+  const result: SaveLinkResult = await browser.runtime.sendMessage({
     type: 'SAVE_LINK',
     url: activeTabUrl,
   });
@@ -80,7 +83,7 @@ async function handleSaveSettings(): Promise<void> {
       apiEndpointInput.value.trim() || 'https://api.linkblog.in/links',
   };
 
-  await chrome.storage.sync.set({ settings });
+  await browser.storage.sync.set({ settings });
   showStatus(settingsMessageEl, 'Settings saved', true);
 }
 

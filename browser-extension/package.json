@@ -1,6 +1,6 @@
 {
   "name": "linkblog-extension",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Save links to your linkblog from any browser tab",
   "private": true,
   "type": "module",

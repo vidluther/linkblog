@@ -48,11 +48,20 @@ pnpm --filter linkblog-extension typecheck
 
 ## Loading in Safari
 
-1. Run `pnpm --filter linkblog-extension build`
-2. Open Xcode
-3. File → New → Project → Safari Extension App
-4. Use the Web Extension Converter to import from the `dist` folder
-5. Build and run
+Requires macOS with Xcode and Xcode Command Line Tools installed.
+
+1. Build the extension:
+   ```bash
+   pnpm --filter linkblog-extension build
+   ```
+2. Convert to a Safari Web Extension Xcode project:
+   ```bash
+   xcrun safari-web-extension-converter browser-extension/dist/ --app-name "Linkblog" --macos-only
+   ```
+   This generates an Xcode project with a native app wrapper and opens it automatically.
+3. In Xcode, click **Run** (or `Cmd+R`) to build and launch the host app.
+4. Open Safari → Settings → Extensions and enable **Linkblog**.
+5. Click the extension icon in the Safari toolbar to configure your API key.
 
 ## Project Structure
 
