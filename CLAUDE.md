@@ -73,6 +73,11 @@ AppModule
 - Links and CRUD Workflow folders use folder-level `x-api-key` auth via `{{apiKey}}`
 - Test scripts auto-capture `linkId` from create/list responses for downstream requests
 
+## Browser Extension
+
+`browser-extension/` — Chrome MV3 extension (workspace package `linkblog-extension`).
+Build: `pnpm --filter linkblog-extension build`. Source in `browser-extension/src/`.
+
 ## Gotchas
 
 - App Runner "config from repository" mode hides the env var UI in console. Use manual config to set secrets.
