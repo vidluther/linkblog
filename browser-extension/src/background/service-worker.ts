@@ -18,7 +18,11 @@ async function getSettings(): Promise<ExtensionSettings> {
   return { ...DEFAULTS, ...result.settings };
 }
 
-async function saveLink(url: string): Promise<SaveLinkResult> {
+async function saveLink(
+  url: string,
+  title?: string,
+  summary?: string,
+): Promise<SaveLinkResult> {
   const settings = await getSettings();
 
   if (!settings.apiKey) {
@@ -35,7 +39,11 @@ async function saveLink(url: string): Promise<SaveLinkResult> {
         'Content-Type': 'application/json',
         'x-api-key': settings.apiKey,
       },
-      body: JSON.stringify({ url }),
+      body: JSON.stringify({
+        url,
+        ...(title && { title }),
+        ...(summary && { summary }),
+      }),
     });
 
     if (response.ok) {
@@ -114,7 +122,7 @@ browser.commands.onCommand.addListener(async (command) => {
 // Message handler for popup communication
 browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === 'SAVE_LINK') {
-    saveLink(message.url).then(sendResponse);
+    saveLink(message.url, message.title, message.summary).then(sendResponse);
     return true; // keep channel open for async response
   }
   return false;

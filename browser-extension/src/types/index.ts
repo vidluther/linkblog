@@ -16,6 +16,8 @@ export interface LinkblogErrorResponse {
 export interface SaveLinkRequest {
   type: 'SAVE_LINK';
   url: string;
+  title?: string;
+  summary?: string;
 }
 
 export interface SaveLinkResult {
