@@ -26,3 +26,8 @@ jobs:
       - run: pnpm build
 
       - run: pnpm test
+
+      # Extension checks
+      - run: pnpm --filter linkblog-extension lint
+      - run: pnpm --filter linkblog-extension typecheck
+      - run: pnpm --filter linkblog-extension build

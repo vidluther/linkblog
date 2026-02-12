@@ -23,6 +23,19 @@ My goal is to learn TypeScript, and NestJS along with Supabase. So..
 - Supabase
 - AWS App Runner
 
+### Build
+
+```bash
+# API (NestJS)
+pnpm build
+
+# Browser extension (lint + typecheck + compile + copy assets)
+pnpm --filter linkblog-extension build
+
+# Clean build the browser extension (wipe dist/ first)
+pnpm --filter linkblog-extension clean && pnpm --filter linkblog-extension build
+```
+
 ### Supabase Migrations
 
 Link the CLI to your Supabase project (one-time):

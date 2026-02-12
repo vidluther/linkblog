@@ -1,0 +1,78 @@
+import type { SaveLinkResult, ExtensionSettings } from "../types/index.js";
+
+const saveBtn = document.getElementById("save-btn") as HTMLButtonElement;
+const currentUrlEl = document.getElementById("current-url") as HTMLDivElement;
+const statusMessageEl = document.getElementById("status-message") as HTMLDivElement;
+const apiKeyInput = document.getElementById("api-key") as HTMLInputElement;
+const apiEndpointInput = document.getElementById("api-endpoint") as HTMLInputElement;
+const saveSettingsBtn = document.getElementById("save-settings-btn") as HTMLButtonElement;
+const settingsMessageEl = document.getElementById("settings-message") as HTMLDivElement;
+
+let activeTabUrl = "";
+
+function showStatus(element: HTMLDivElement, message: string, isSuccess: boolean): void {
+  element.textContent = message;
+  element.className = `status-message ${isSuccess ? "success" : "error"}`;
+  setTimeout(() => {
+    element.className = "status-message hidden";
+  }, 4000);
+}
+
+async function loadActiveTab(): Promise<void> {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (tab?.url) {
+    activeTabUrl = tab.url;
+    currentUrlEl.textContent = tab.url;
+  } else {
+    currentUrlEl.textContent = "No URL available";
+    saveBtn.disabled = true;
+  }
+}
+
+async function loadSettings(): Promise<void> {
+  const result = await chrome.storage.sync.get("settings");
+  const settings: ExtensionSettings = {
+    apiKey: "",
+    apiEndpoint: "https://api.linkblog.in/links",
+    ...result.settings,
+  };
+  apiKeyInput.value = settings.apiKey;
+  apiEndpointInput.value = settings.apiEndpoint;
+}
+
+async function handleSaveLink(): Promise<void> {
+  if (!activeTabUrl) return;
+
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Saving...";
+
+  const result: SaveLinkResult = await chrome.runtime.sendMessage({
+    type: "SAVE_LINK",
+    url: activeTabUrl,
+  });
+
+  saveBtn.disabled = false;
+  saveBtn.textContent = "Save to Linkblog";
+
+  if (result.success) {
+    showStatus(statusMessageEl, `Saved: ${result.title ?? "Link saved"}`, true);
+  } else {
+    showStatus(statusMessageEl, result.error ?? "Failed to save", false);
+  }
+}
+
+async function handleSaveSettings(): Promise<void> {
+  const settings: ExtensionSettings = {
+    apiKey: apiKeyInput.value.trim(),
+    apiEndpoint: apiEndpointInput.value.trim() || "https://api.linkblog.in/links",
+  };
+
+  await chrome.storage.sync.set({ settings });
+  showStatus(settingsMessageEl, "Settings saved", true);
+}
+
+saveBtn.addEventListener("click", handleSaveLink);
+saveSettingsBtn.addEventListener("click", handleSaveSettings);
+
+loadActiveTab();
+loadSettings();

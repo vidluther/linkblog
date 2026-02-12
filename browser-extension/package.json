@@ -1,0 +1,22 @@
+{
+  "name": "linkblog-extension",
+  "version": "1.0.1",
+  "description": "Save links to your linkblog from any browser tab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm lint && pnpm typecheck && pnpm compile && pnpm copy-assets",
+    "copy-assets": "cp manifest.json dist/ && cp src/popup/popup.html dist/popup/ && cp src/popup/popup.css dist/popup/ && cp -r icons dist/",
+    "compile": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint src/",
+    "lint:fix": "oxlint --fix src/",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "oxlint": "^1.43.0",
+    "typescript": "^5.7.0"
+  }
+}
