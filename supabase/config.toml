@@ -368,6 +368,10 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
+[functions.fetch-metadata]
+# Disable Supabase JWT verification — this function uses its own x-api-key auth
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 54327

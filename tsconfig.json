@@ -20,5 +20,5 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": false
   },
-  "exclude": ["browser-extension"]
+  "exclude": ["browser-extension", "supabase"]
 }

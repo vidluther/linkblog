@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "linkedom": "npm:linkedom@^0.16.0",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@2"
+  }
+}
