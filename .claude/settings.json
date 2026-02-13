@@ -14,5 +14,22 @@
       "Bash(pnpm ls:*)"
     ]
   },
-  "prefersReducedMotion": true
+  "prefersReducedMotion": true,
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pnpx oxfmt ."
+          },
+          {
+            "type": "command",
+            "command": "pnpx oxlint ."
+          }
+        ]
+      }
+    ]
+  }
 }
