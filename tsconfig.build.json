@@ -5,6 +5,7 @@
     "test",
     "dist",
     "browser-extension",
+    "supabase",
     "**/*spec.ts"
   ]
 }
