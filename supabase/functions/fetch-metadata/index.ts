@@ -7,23 +7,6 @@ function isBlank(value: string | null | undefined): boolean {
   return !value || value.trim().length === 0;
 }
 
-function timingSafeEqual(a: string, b: string): boolean {
-  const encoder = new TextEncoder();
-  const bufA = encoder.encode(a);
-  const bufB = encoder.encode(b);
-
-  if (bufA.length !== bufB.length) {
-    return false;
-  }
-
-  // Constant-time comparison
-  let mismatch = 0;
-  for (let i = 0; i < bufA.length; i++) {
-    mismatch |= bufA[i] ^ bufB[i];
-  }
-  return mismatch === 0;
-}
-
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
