@@ -36,6 +36,10 @@ pnpm --filter linkblog-extension build
 pnpm --filter linkblog-extension clean && pnpm --filter linkblog-extension build
 ```
 
+### Edge Functions
+
+- **[fetch-metadata](supabase/functions/fetch-metadata/README.md)** — Deno function that auto-fetches OpenGraph metadata (title, summary) for bookmarked links. Runs on-demand or automatically via a database trigger on insert.
+
 ### Supabase Migrations
 
 Link the CLI to your Supabase project (one-time):

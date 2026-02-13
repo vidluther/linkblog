@@ -83,7 +83,18 @@ Build: `pnpm build:extension`. Clean build: `pnpm clean:extension`. Source in `b
 
 - Uses `browser.*` namespace with a `globalThis.browser ?? globalThis.chrome` shim for cross-browser compat.
 - Safari: `notifications` API is unsupported; notification calls silently no-op.
-- Root `tsconfig.json` and `tsconfig.build.json` both exclude `browser-extension/` to avoid NestJS compilation conflicts.
+- Root `tsconfig.json` and `tsconfig.build.json` both exclude `browser-extension/` and `supabase/` to avoid NestJS compilation conflicts (Deno/non-Node code).
+
+## Supabase Edge Functions
+
+`supabase/functions/` — Deno Edge Functions (NOT Node). Run via `pnpx supabase functions serve <name> --env-file supabase/.env.local`.
+
+- **Auth:** `verify_jwt = false` in `config.toml` for functions using custom auth. Configure per-function under `[functions.<name>]`.
+- **Secrets:** `SUPABASE_URL` is auto-injected. New keys (`sb_secret_*`, `sb_publishable_*`) are NOT auto-injected yet — set via `.env.local` (local) or `supabase secrets set` (hosted). Cannot use `SUPABASE_` prefix for custom secrets.
+- **pg_net + Docker:** Triggers using `pg_net` run inside the Postgres container. Use `http://kong:8000` (internal Docker network), not `http://127.0.0.1:54321`, for local edge function calls.
+- **DB config:** `ALTER DATABASE SET app.settings.*` requires superuser (not available locally). Use the `app_config` table instead.
+- **Trigger config:** `app_config` table stores `supabase_url` for the `notify_fetch_metadata()` trigger. Seeded via `supabase/seed.sql`.
+- **Deploy:** `pnpx supabase functions deploy <name> --linked` + `pnpx supabase db push --linked` for migrations.
 
 ## Gotchas
 
