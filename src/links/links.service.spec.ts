@@ -6,8 +6,11 @@ import {
 import { LinksService } from './links.service';
 import { SUPABASE_CLIENT } from '../supabase/supabase.module.js';
 
+const USER_ID = 'user-uuid-1';
+
 const mockLink = {
   id: 1,
+  user_id: USER_ID,
   url: 'https://example.com',
   title: 'Example',
   summary: 'A summary',
@@ -51,19 +54,20 @@ describe('LinksService', () => {
   });
 
   describe('create', () => {
-    it('should insert and return the new link', async () => {
+    it('should insert with user_id and return the new link', async () => {
       supabase.single.mockResolvedValue({ data: mockLink, error: null });
 
-      const result = await service.create({
-        url: 'https://example.com',
-        title: 'Example',
-      });
+      const result = await service.create(
+        { url: 'https://example.com', title: 'Example' },
+        USER_ID,
+      );
 
       expect(result).toEqual(mockLink);
       expect(supabase.from).toHaveBeenCalledWith('links');
       expect(supabase.insert).toHaveBeenCalledWith({
         url: 'https://example.com',
         title: 'Example',
+        user_id: USER_ID,
       });
     });
 
@@ -74,21 +78,25 @@ describe('LinksService', () => {
       });
 
       await expect(
-        service.create({ url: 'https://example.com', title: 'Example' }),
+        service.create(
+          { url: 'https://example.com', title: 'Example' },
+          USER_ID,
+        ),
       ).rejects.toThrow(InternalServerErrorException);
     });
   });
 
   describe('findAll', () => {
-    it('should return all links ordered by created_at desc', async () => {
+    it('should return links filtered by user_id ordered by created_at desc', async () => {
       const mockLinks = [mockLink];
       supabase.order.mockResolvedValue({ data: mockLinks, error: null });
 
-      const result = await service.findAll();
+      const result = await service.findAll(USER_ID);
 
       expect(result).toEqual(mockLinks);
       expect(supabase.from).toHaveBeenCalledWith('links');
       expect(supabase.select).toHaveBeenCalledWith('*');
+      expect(supabase.eq).toHaveBeenCalledWith('user_id', USER_ID);
       expect(supabase.order).toHaveBeenCalledWith('created_at', {
         ascending: false,
       });
@@ -100,21 +108,22 @@ describe('LinksService', () => {
         error: { message: 'db error' },
       });
 
-      await expect(service.findAll()).rejects.toThrow(
+      await expect(service.findAll(USER_ID)).rejects.toThrow(
         InternalServerErrorException,
       );
     });
   });
 
   describe('findOne', () => {
-    it('should return a single link by id', async () => {
+    it('should return a link by id scoped to user_id', async () => {
       supabase.single.mockResolvedValue({ data: mockLink, error: null });
 
-      const result = await service.findOne(1);
+      const result = await service.findOne(1, USER_ID);
 
       expect(result).toEqual(mockLink);
       expect(supabase.from).toHaveBeenCalledWith('links');
       expect(supabase.eq).toHaveBeenCalledWith('id', 1);
+      expect(supabase.eq).toHaveBeenCalledWith('user_id', USER_ID);
     });
 
     it('should throw NotFoundException when link does not exist', async () => {
@@ -123,47 +132,21 @@ describe('LinksService', () => {
         error: { code: 'PGRST116', message: 'not found' },
       });
 
-      await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
-      await expect(service.findOne(999)).rejects.toThrow('Link #999 not found');
-    });
-
-    it('should throw InternalServerErrorException on generic supabase error', async () => {
-      supabase.single.mockResolvedValue({
-        data: null,
-        error: { code: 'OTHER', message: 'unexpected' },
-      });
-
-      await expect(service.findOne(1)).rejects.toThrow(
-        InternalServerErrorException,
+      await expect(service.findOne(999, USER_ID)).rejects.toThrow(
+        NotFoundException,
+      );
+      await expect(service.findOne(999, USER_ID)).rejects.toThrow(
+        'Link #999 not found',
       );
     });
-  });
 
-  describe('update', () => {
-    it('should update and return the link', async () => {
-      const updated = { ...mockLink, title: 'Updated' };
-      supabase.single.mockResolvedValue({ data: updated, error: null });
-
-      const result = await service.update(1, { title: 'Updated' });
-
-      expect(result).toEqual(updated);
-      expect(supabase.from).toHaveBeenCalledWith('links');
-      expect(supabase.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: 'Updated',
-          updated_at: expect.any(String),
-        }),
-      );
-      expect(supabase.eq).toHaveBeenCalledWith('id', 1);
-    });
-
-    it('should throw NotFoundException when link does not exist', async () => {
+    it('should throw NotFoundException when link belongs to a different user', async () => {
       supabase.single.mockResolvedValue({
         data: null,
         error: { code: 'PGRST116', message: 'not found' },
       });
 
-      await expect(service.update(999, { title: 'Nope' })).rejects.toThrow(
+      await expect(service.findOne(1, 'other-user-id')).rejects.toThrow(
         NotFoundException,
       );
     });
@@ -174,30 +157,75 @@ describe('LinksService', () => {
         error: { code: 'OTHER', message: 'unexpected' },
       });
 
-      await expect(service.update(1, { title: 'Fail' })).rejects.toThrow(
+      await expect(service.findOne(1, USER_ID)).rejects.toThrow(
         InternalServerErrorException,
       );
     });
   });
 
+  describe('update', () => {
+    it('should update and return the link scoped to user_id', async () => {
+      const updated = { ...mockLink, title: 'Updated' };
+      supabase.single.mockResolvedValue({ data: updated, error: null });
+
+      const result = await service.update(1, { title: 'Updated' }, USER_ID);
+
+      expect(result).toEqual(updated);
+      expect(supabase.from).toHaveBeenCalledWith('links');
+      expect(supabase.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Updated',
+          updated_at: expect.any(String),
+        }),
+      );
+      expect(supabase.eq).toHaveBeenCalledWith('id', 1);
+      expect(supabase.eq).toHaveBeenCalledWith('user_id', USER_ID);
+    });
+
+    it('should throw NotFoundException when link does not exist or belongs to another user', async () => {
+      supabase.single.mockResolvedValue({
+        data: null,
+        error: { code: 'PGRST116', message: 'not found' },
+      });
+
+      await expect(
+        service.update(999, { title: 'Nope' }, USER_ID),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw InternalServerErrorException on generic supabase error', async () => {
+      supabase.single.mockResolvedValue({
+        data: null,
+        error: { code: 'OTHER', message: 'unexpected' },
+      });
+
+      await expect(
+        service.update(1, { title: 'Fail' }, USER_ID),
+      ).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
   describe('remove', () => {
-    it('should delete the link without returning data', async () => {
+    it('should delete the link scoped to user_id', async () => {
       supabase.single.mockResolvedValue({ error: null });
 
-      const result = await service.remove(1);
+      const result = await service.remove(1, USER_ID);
 
       expect(result).toBeUndefined();
       expect(supabase.from).toHaveBeenCalledWith('links');
       expect(supabase.delete).toHaveBeenCalled();
       expect(supabase.eq).toHaveBeenCalledWith('id', 1);
+      expect(supabase.eq).toHaveBeenCalledWith('user_id', USER_ID);
     });
 
-    it('should throw NotFoundException when link does not exist', async () => {
+    it('should throw NotFoundException when link does not exist or belongs to another user', async () => {
       supabase.single.mockResolvedValue({
         error: { code: 'PGRST116', message: 'not found' },
       });
 
-      await expect(service.remove(999)).rejects.toThrow(NotFoundException);
+      await expect(service.remove(999, USER_ID)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw InternalServerErrorException on generic supabase error', async () => {
@@ -205,7 +233,7 @@ describe('LinksService', () => {
         error: { code: 'OTHER', message: 'unexpected' },
       });
 
-      await expect(service.remove(1)).rejects.toThrow(
+      await expect(service.remove(1, USER_ID)).rejects.toThrow(
         InternalServerErrorException,
       );
     });
