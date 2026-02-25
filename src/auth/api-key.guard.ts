@@ -1,22 +1,25 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ConfigService } from '@nestjs/config';
-import { timingSafeEqual } from 'crypto';
-import { IS_PUBLIC_KEY } from './public.decorator';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { createHash } from 'crypto';
+import { SUPABASE_CLIENT } from '../supabase/supabase.module.js';
+import { IS_PUBLIC_KEY } from './public.decorator.js';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly configService: ConfigService,
+    @Inject(SUPABASE_CLIENT) private readonly supabase: SupabaseClient,
   ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -33,27 +36,49 @@ export class ApiKeyGuard implements CanActivate {
       throw new UnauthorizedException('Missing x-api-key header');
     }
 
-    const expectedKey = this.configService.get<string>('API_KEY');
+    const keyHash = createHash('sha256').update(apiKey).digest('hex');
 
-    if (!expectedKey) {
-      throw new UnauthorizedException('API_KEY not configured');
-    }
+    // Look up key by hash in the api_keys table
+    const { data: apiKeyRow, error: apiKeyError } = await this.supabase
+      .from('api_keys')
+      .select('user_id')
+      .eq('key_hash', keyHash)
+      .single();
 
-    if (!this.keysMatch(apiKey, expectedKey)) {
+    if (apiKeyError || !apiKeyRow) {
       throw new UnauthorizedException('Invalid API key');
     }
 
-    return true;
-  }
+    const userId: string = apiKeyRow.user_id;
 
-  private keysMatch(a: string, b: string): boolean {
-    const bufA = Buffer.from(a);
-    const bufB = Buffer.from(b);
+    // Resolve the username for this user
+    const { data: profileRow, error: profileError } = await this.supabase
+      .from('profiles')
+      .select('username')
+      .eq('id', userId)
+      .single();
 
-    if (bufA.length !== bufB.length) {
-      return false;
+    if (profileError || !profileRow) {
+      throw new UnauthorizedException('Invalid API key');
     }
 
-    return timingSafeEqual(bufA, bufB);
+    const username: string = profileRow.username;
+
+    // If there is a :username param in the URL, verify the key owner matches
+    const usernameParam: string | undefined = request.params?.username;
+    if (usernameParam && usernameParam !== username) {
+      throw new ForbiddenException('API key does not match the requested user');
+    }
+
+    // Attach user to the request
+    request.user = { userId, username };
+
+    // Fire-and-forget: update last_used_at asynchronously
+    void this.supabase
+      .from('api_keys')
+      .update({ last_used_at: new Date().toISOString() })
+      .eq('key_hash', keyHash);
+
+    return true;
   }
 }

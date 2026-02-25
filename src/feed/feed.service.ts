@@ -1,19 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { LinksService } from '../links/links.service';
 
 @Injectable()
 export class FeedService {
-  constructor(private readonly linksService: LinksService) {}
+  constructor(
+    private readonly linksService: LinksService,
+    private readonly configService: ConfigService,
+  ) {}
 
-  async generateRssFeed(): Promise<string> {
+  async generateRssFeed(userId: string, username: string): Promise<string> {
     const { Feed } = await import('feed');
-    const links = await this.linksService.findAll();
+    const links = await this.linksService.findAll(userId);
+
+    const appUrl = this.configService.get<string>(
+      'APP_URL',
+      'https://app.linkblog.in',
+    );
+    const feedUrl = `${appUrl}/${username}/feed`;
 
     const feed = new Feed({
-      title: 'Linkblog',
+      title: `${username}'s Linkblog`,
       description: 'Things that I found interesting',
-      id: 'https://luther.io/blogroll',
-      link: 'https://luther.io/blogroll',
+      id: feedUrl,
+      link: feedUrl,
       language: 'en',
       generator: 'Linkblog',
       copyright: '',
