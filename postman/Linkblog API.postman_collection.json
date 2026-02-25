@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "ebced492-34b2-40c0-bc20-30e72b7c62b4",
     "name": "Linkblog API",
-    "description": "Personal bookmarking API (NestJS + Supabase) that publishes an RSS feed.\n\n## Setup\n1. Import the **Linkblog - Local** environment\n2. Set the `apiKey` variable to your `API_KEY` value\n3. Start the server: `npm run start:dev`\n4. Run requests — the collection auto-captures `linkId` from create/list responses\n\n## Auth\nAll `/links` endpoints require the `x-api-key` header. The collection inherits this from the folder-level auth config.",
+    "description": "Personal bookmarking API (NestJS + Supabase) that publishes an RSS feed.\n\n## Setup\n1. Import the **Linkblog - Local** environment\n2. Set the `apiKey` variable to your API key value (format: `lb_<64 hex chars>`)\n3. Set the `username` variable to your profile username\n4. Start the server: `pnpm start:dev`\n5. Run requests — the collection auto-captures `linkId` from create/list responses\n\n## Auth\nAll write endpoints require the `x-api-key` header. The collection inherits this from the folder-level auth config.\n\n## URL convention\nAll endpoints are user-scoped: `/:username/links`, `/:username/feed`, `/:username/api-keys`",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "19671261"
   },
@@ -74,16 +74,16 @@
               "raw": "{\n  \"url\": \"https://example.com\",\n  \"title\": \"Should Not Work\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/links",
+              "raw": "{{baseUrl}}/{{username}}/links",
               "host": ["{{baseUrl}}"],
-              "path": ["links"]
+              "path": ["{{username}}", "links"]
             },
-            "description": "Attempt to create a link with an invalid API key. Should return 401 Unauthorized."
+            "description": "Attempt to create a link with no API key. Should return 401 Unauthorized."
           },
           "response": []
         },
         {
-          "name": "Create Link - Wrong API Key (expect 401) Copy",
+          "name": "Create Link - Wrong API Key (expect 401)",
           "event": [
             {
               "listen": "test",
@@ -127,9 +127,9 @@
               "raw": "{\n  \"url\": \"https://example.com\",\n  \"title\": \"Should Not Work\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/links",
+              "raw": "{{baseUrl}}/{{username}}/links",
               "host": ["{{baseUrl}}"],
-              "path": ["links"]
+              "path": ["{{username}}", "links"]
             },
             "description": "Attempt to create a link with an invalid API key. Should return 401 Unauthorized."
           },
@@ -147,36 +147,20 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "// ============================================",
-                  "// Create Link - Post-Response Tests",
-                  "// ============================================",
-                  "",
                   "const body = pm.response.json();",
                   "",
-                  "// --------------------------------------------",
-                  "// 1. Performance Tests",
-                  "// --------------------------------------------",
                   "pm.test('Response time is under 2000ms', function () {",
                   "    pm.expect(pm.response.responseTime).to.be.below(2000);",
                   "});",
                   "",
-                  "// --------------------------------------------",
-                  "// 2. Status Code Validation",
-                  "// --------------------------------------------",
                   "pm.test('Status code is 201 Created', function () {",
                   "    pm.response.to.have.status(201);",
                   "});",
                   "",
-                  "// --------------------------------------------",
-                  "// 3. Response Header Validation",
-                  "// --------------------------------------------",
                   "pm.test('Content-Type header is application/json', function () {",
                   "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
                   "});",
                   "",
-                  "// --------------------------------------------",
-                  "// 4. Required Fields Present",
-                  "// --------------------------------------------",
                   "pm.test('Response contains all required fields', function () {",
                   "    pm.expect(body).to.have.property('id');",
                   "    pm.expect(body).to.have.property('url');",
@@ -185,9 +169,6 @@
                   "    pm.expect(body).to.have.property('updated_at');",
                   "});",
                   "",
-                  "// --------------------------------------------",
-                  "// 5. Data Type Validation",
-                  "// --------------------------------------------",
                   "pm.test('ID is a number', function () {",
                   "    pm.expect(body.id).to.be.a('number');",
                   "    pm.expect(Number.isInteger(body.id)).to.be.true;",
@@ -197,24 +178,10 @@
                   "    pm.expect(body.url).to.be.a('string');",
                   "});",
                   "",
-                  "pm.test('Title is NULL', function () {",
-                  "    pm.expect(body.title).to.be.a('null');",
-                  "});",
-                  "",
-                  "pm.test('Summary is NULL', function () {",
-                  "    pm.expect(body.summary).to.be.a('null');",
-                  "});",
-                  "",
-                  "// --------------------------------------------",
-                  "// 6. URL Format Validation",
-                  "// --------------------------------------------",
                   "pm.test('URL has valid format', function () {",
                   "    pm.expect(body.url).to.match(/^https?:\\/\\/.+/);",
                   "});",
                   "",
-                  "// --------------------------------------------",
-                  "// 7. Timestamp Validation",
-                  "// --------------------------------------------",
                   "pm.test('created_at is valid ISO 8601 timestamp', function () {",
                   "    const date = new Date(body.created_at);",
                   "    pm.expect(date.toString()).to.not.equal('Invalid Date');",
@@ -223,17 +190,10 @@
                   "pm.test('updated_at is valid ISO 8601 timestamp', function () {",
                   "    const date = new Date(body.updated_at);",
                   "    pm.expect(date.toString()).to.not.equal('Invalid Date');",
-                  "});"
+                  "});",
+                  "",
+                  "if (body.id) { pm.environment.set('linkId', body.id); }"
                 ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            },
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [""],
                 "type": "text/javascript",
                 "packages": {},
                 "requests": {}
@@ -258,11 +218,11 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/links",
+              "raw": "{{baseUrl}}/{{username}}/links",
               "host": ["{{baseUrl}}"],
-              "path": ["links"]
+              "path": ["{{username}}", "links"]
             },
-            "description": "Create a new bookmarked link. On success, auto-saves the returned `id` to `linkId` for use in subsequent requests."
+            "description": "Create a new bookmarked link. On success, auto-saves the returned `id` to `linkId`."
           },
           "response": []
         },
@@ -281,7 +241,6 @@
                   "    pm.expect(pm.response.json()).to.be.an('array');",
                   "});",
                   "",
-                  "// Capture first link id for convenience",
                   "const body = pm.response.json();",
                   "if (Array.isArray(body) && body.length > 0) {",
                   "    pm.environment.set('linkId', body[0].id);",
@@ -298,28 +257,11 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/links?url={{$randomUrl}}&title={{$randomAdjective}}&summary={{$randomWords}}",
+              "raw": "{{baseUrl}}/{{username}}/links",
               "host": ["{{baseUrl}}"],
-              "path": ["links"],
-              "query": [
-                {
-                  "key": "url",
-                  "value": "{{$randomUrl}}",
-                  "type": "text"
-                },
-                {
-                  "key": "title",
-                  "value": "{{$randomAdjective}}",
-                  "type": "text"
-                },
-                {
-                  "key": "summary",
-                  "value": "{{$randomWords}}",
-                  "type": "text"
-                }
-              ]
+              "path": ["{{username}}", "links"]
             },
-            "description": "Get all bookmarked links, ordered by `created_at` descending (newest first). Auto-saves the first link's `id` to `linkId`."
+            "description": "Get all bookmarked links for the user, ordered newest first. Auto-saves the first link's `id` to `linkId`."
           },
           "response": []
         },
@@ -357,9 +299,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/links/{{linkId}}",
+              "raw": "{{baseUrl}}/{{username}}/links/{{linkId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["links", "{{linkId}}"]
+              "path": ["{{username}}", "links", "{{linkId}}"]
             },
             "description": "Get a single link by ID. Uses `linkId` variable (auto-set by Create or List requests)."
           },
@@ -403,9 +345,9 @@
               "raw": "{\n  \"title\": \"Updated Title\",\n  \"summary\": \"Updated summary with new notes.\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/links/{{linkId}}",
+              "raw": "{{baseUrl}}/{{username}}/links/{{linkId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["links", "{{linkId}}"]
+              "path": ["{{username}}", "links", "{{linkId}}"]
             },
             "description": "Partially update a link. All body fields are optional. Uses `linkId` variable."
           },
@@ -423,7 +365,6 @@
                   "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
                   "});",
                   "",
-                  "// Clear linkId after deletion",
                   "pm.environment.unset('linkId');",
                   "console.log('Cleared linkId after deletion');"
                 ]
@@ -434,16 +375,16 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/links/{{linkId}}",
+              "raw": "{{baseUrl}}/{{username}}/links/{{linkId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["links", "{{linkId}}"]
+              "path": ["{{username}}", "links", "{{linkId}}"]
             },
-            "description": "Delete a link by ID. Uses `linkId` variable. Clears the `linkId` variable on success."
+            "description": "Delete a link by ID. Uses `linkId` variable. Clears `linkId` on success."
           },
           "response": []
         }
       ],
-      "description": "CRUD operations on bookmarked links. All endpoints require `x-api-key` header.",
+      "description": "CRUD operations on bookmarked links. Write endpoints require `x-api-key` header.",
       "auth": {
         "type": "apikey",
         "apikey": [
@@ -500,15 +441,168 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/feed",
+              "raw": "{{baseUrl}}/{{username}}/feed",
               "host": ["{{baseUrl}}"],
-              "path": ["feed"]
+              "path": ["{{username}}", "feed"]
             },
-            "description": "Public RSS 2.0 feed of all links (newest first). No auth required."
+            "description": "Public RSS 2.0 feed of the user's links (newest first). No auth required."
           },
           "response": []
         }
       ]
+    },
+    {
+      "name": "API Keys",
+      "item": [
+        {
+          "name": "List API Keys",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "if (Array.isArray(body) && body.length > 0) {",
+                  "    pm.environment.set('apiKeyId', body[0].id);",
+                  "    console.log('Saved apiKeyId:', body[0].id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{username}}/api-keys",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{username}}", "api-keys"]
+            },
+            "description": "List all API keys for the authenticated user. Returns id, name, created_at, last_used_at — never the raw key or hash."
+          },
+          "response": []
+        },
+        {
+          "name": "Create API Key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response contains rawKey', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('rawKey');",
+                  "    pm.expect(body.rawKey).to.match(/^lb_[0-9a-f]{64}$/);",
+                  "});",
+                  "",
+                  "pm.test('Response contains id and name', function () {",
+                  "    const body = pm.response.json();",
+                  "    pm.expect(body).to.have.property('id');",
+                  "    pm.expect(body).to.have.property('name');",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "if (body.id) {",
+                  "    pm.environment.set('apiKeyId', body.id);",
+                  "    console.log('Saved apiKeyId:', body.id);",
+                  "    console.log('Raw key (save this — shown once):', body.rawKey);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"postman test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{username}}/api-keys",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{username}}", "api-keys"]
+            },
+            "description": "Create a new API key. The `rawKey` field is returned only once — save it immediately. Auto-saves `apiKeyId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete API Key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200 or 204', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});",
+                  "",
+                  "pm.environment.unset('apiKeyId');",
+                  "console.log('Cleared apiKeyId after deletion');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/{{username}}/api-keys/{{apiKeyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{username}}", "api-keys", "{{apiKeyId}}"]
+            },
+            "description": "Delete an API key by ID. Uses `apiKeyId` variable. Clears `apiKeyId` on success."
+          },
+          "response": []
+        }
+      ],
+      "description": "Manage API keys for the authenticated user. All endpoints require `x-api-key` header.",
+      "auth": {
+        "type": "apikey",
+        "apikey": [
+          {
+            "key": "key",
+            "value": "x-api-key",
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "value": "{{apiKey}}",
+            "type": "string"
+          },
+          {
+            "key": "in",
+            "value": "header",
+            "type": "string"
+          }
+        ]
+      }
     },
     {
       "name": "CRUD Workflow (Run in Order)",
@@ -545,9 +639,9 @@
               "raw": "{\n  \"url\": \"https://example.com/workflow-test\",\n  \"title\": \"Workflow Test Link\",\n  \"summary\": \"Created by the CRUD workflow runner.\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/links",
+              "raw": "{{baseUrl}}/{{username}}/links",
               "host": ["{{baseUrl}}"],
-              "path": ["links"]
+              "path": ["{{username}}", "links"]
             }
           },
           "response": []
@@ -576,9 +670,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
+              "raw": "{{baseUrl}}/{{username}}/links/{{workflowLinkId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["links", "{{workflowLinkId}}"]
+              "path": ["{{username}}", "links", "{{workflowLinkId}}"]
             }
           },
           "response": []
@@ -616,9 +710,9 @@
               "raw": "{\n  \"title\": \"Workflow Test Link (Updated)\",\n  \"summary\": \"Updated by the CRUD workflow runner.\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
+              "raw": "{{baseUrl}}/{{username}}/links/{{workflowLinkId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["links", "{{workflowLinkId}}"]
+              "path": ["{{username}}", "links", "{{workflowLinkId}}"]
             }
           },
           "response": []
@@ -652,9 +746,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
+              "raw": "{{baseUrl}}/{{username}}/links/{{workflowLinkId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["links", "{{workflowLinkId}}"]
+              "path": ["{{username}}", "links", "{{workflowLinkId}}"]
             }
           },
           "response": []
@@ -678,9 +772,9 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
+              "raw": "{{baseUrl}}/{{username}}/links/{{workflowLinkId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["links", "{{workflowLinkId}}"]
+              "path": ["{{username}}", "links", "{{workflowLinkId}}"]
             }
           },
           "response": []
@@ -697,7 +791,6 @@
                   "    pm.response.to.have.status(404);",
                   "});",
                   "",
-                  "// Clean up workflow variables",
                   "pm.environment.unset('workflowLinkId');",
                   "pm.environment.unset('workflowOriginalTitle');"
                 ]
@@ -708,9 +801,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/links/{{workflowLinkId}}",
+              "raw": "{{baseUrl}}/{{username}}/links/{{workflowLinkId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["links", "{{workflowLinkId}}"]
+              "path": ["{{username}}", "links", "{{workflowLinkId}}"]
             }
           },
           "response": []

@@ -8,6 +8,7 @@ import { FeedModule } from './feed/feed.module';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
 import { UsersModule } from './users/users.module.js';
+import { ApiKeysModule } from './api-keys/api-keys.module.js';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 
 @Module({
@@ -16,6 +17,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
     SupabaseModule,
     AuthModule,
     UsersModule,
+    ApiKeysModule,
     LinksModule,
     FeedModule,
     HealthModule,

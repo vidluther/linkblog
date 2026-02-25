@@ -15,10 +15,10 @@ export class LinksService {
     @Inject(SUPABASE_CLIENT) private readonly supabase: SupabaseClient,
   ) {}
 
-  async create(createLinkDto: CreateLinkDto) {
+  async create(createLinkDto: CreateLinkDto, userId: string) {
     const { data, error } = await this.supabase
       .from('links')
-      .insert(createLinkDto)
+      .insert({ ...createLinkDto, user_id: userId })
       .select()
       .single();
 
@@ -29,10 +29,11 @@ export class LinksService {
     return data;
   }
 
-  async findAll() {
+  async findAll(userId: string) {
     const { data, error } = await this.supabase
       .from('links')
       .select('*')
+      .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -42,11 +43,12 @@ export class LinksService {
     return data;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, userId: string) {
     const { data, error } = await this.supabase
       .from('links')
       .select('*')
       .eq('id', id)
+      .eq('user_id', userId)
       .single();
 
     if (error) {
@@ -59,11 +61,12 @@ export class LinksService {
     return data;
   }
 
-  async update(id: number, updateLinkDto: UpdateLinkDto) {
+  async update(id: number, updateLinkDto: UpdateLinkDto, userId: string) {
     const { data, error } = await this.supabase
       .from('links')
       .update({ ...updateLinkDto, updated_at: new Date().toISOString() })
       .eq('id', id)
+      .eq('user_id', userId)
       .select()
       .single();
 
@@ -77,11 +80,12 @@ export class LinksService {
     return data;
   }
 
-  async remove(id: number) {
+  async remove(id: number, userId: string) {
     const { error } = await this.supabase
       .from('links')
       .delete()
       .eq('id', id)
+      .eq('user_id', userId)
       .select()
       .single();
 
