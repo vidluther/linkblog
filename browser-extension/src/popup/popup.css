@@ -68,6 +68,37 @@ input[type='url'] {
   outline: none;
 }
 
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper input {
+  padding-right: 36px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #90a4ae;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password:hover {
+  color: #e0e0e0;
+}
+
+.toggle-password .hidden {
+  display: none;
+}
+
 input:focus {
   border-color: #4fc3f7;
 }

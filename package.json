@@ -19,11 +19,11 @@
     "start:prod": "node dist/main",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test": "vitest --run",
+    "test:watch": "vitest --watch",
+    "test:cov": "vitest --coverage",
+    "test:debug": "vitest --run",
+    "test:e2e": "vitest --config ./vitest.config.e2e.ts",
     "build:extension": "pnpm --filter linkblog-extension build",
     "clean:extension": "pnpm --filter linkblog-extension clean"
   },
@@ -46,43 +46,24 @@
     "@nestjs/cli": "^11.0.16",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "^11.1.13",
+    "@swc/core": "^1.15.13",
     "@types/express": "^5.0.6",
-    "@types/jest": "^30.0.0",
     "@types/node": "^22.19.10",
     "@types/supertest": "^6.0.3",
+    "@vitest/coverage-v8": "^4.0.18",
     "globals": "^16.5.0",
-    "jest": "^30.2.0",
     "oxfmt": "^0.28.0",
     "oxlint": "^1.43.0",
     "prettier": "^3.8.1",
     "source-map-support": "^0.5.21",
     "supabase": "^2.76.3",
     "supertest": "^7.2.2",
-    "ts-jest": "^29.4.6",
     "ts-loader": "^9.5.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.20.0"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "moduleNameMapper": {
-      "^(\\.\\.?/.+)\\.js$": "$1"
-    }
+    "typescript-eslint": "^8.20.0",
+    "vite-tsconfig-paths": "^5.1.0",
+    "vitest": "^2.1.9"
   }
 }

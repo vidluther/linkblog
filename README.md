@@ -43,6 +43,25 @@ pnpm start:dev
 
 #### Go To Postman
 
+### Testing
+
+```bash
+# Run all tests (Vitest)
+pnpm test
+
+# Watch mode
+pnpm test --watch
+
+# Run tests matching pattern
+pnpm test links
+
+# Run specific test file
+pnpm test src/links/links.controller.spec.ts
+
+# Run with coverage
+pnpm test:cov
+```
+
 ### Build
 
 ```bash

@@ -1,7 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { LinksController } from './links.controller';
 import { LinksService } from './links.service';
-import { SUPABASE_CLIENT } from '../supabase/supabase.module.js';
 import { IS_PUBLIC_KEY } from '../auth/public.decorator';
 
 const mockLink = {
@@ -13,32 +11,19 @@ const mockLink = {
   updated_at: '2026-01-01T00:00:00.000Z',
 };
 
-const mockSupabaseClient = {
-  from: jest.fn().mockReturnThis(),
-  select: jest.fn().mockReturnThis(),
-  insert: jest.fn().mockReturnThis(),
-  update: jest.fn().mockReturnThis(),
-  delete: jest.fn().mockReturnThis(),
-  eq: jest.fn().mockReturnThis(),
-  order: jest.fn().mockReturnThis(),
-  single: jest.fn(),
-};
-
 describe('LinksController', () => {
   let controller: LinksController;
   let service: LinksService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [LinksController],
-      providers: [
-        LinksService,
-        { provide: SUPABASE_CLIENT, useValue: mockSupabaseClient },
-      ],
-    }).compile();
-
-    controller = module.get<LinksController>(LinksController);
-    service = module.get<LinksService>(LinksService);
+  beforeEach(() => {
+    service = {
+      create: vi.fn(),
+      findAll: vi.fn(),
+      findOne: vi.fn(),
+      update: vi.fn(),
+      remove: vi.fn(),
+    } as unknown as LinksService;
+    controller = new LinksController(service);
   });
 
   it('should be defined', () => {
@@ -47,7 +32,7 @@ describe('LinksController', () => {
 
   describe('create', () => {
     it('should delegate to LinksService.create', async () => {
-      jest.spyOn(service, 'create').mockResolvedValue(mockLink);
+      vi.mocked(service.create).mockResolvedValue(mockLink);
 
       const dto = { url: 'https://example.com', title: 'Example' };
       const result = await controller.create(dto);
@@ -59,7 +44,7 @@ describe('LinksController', () => {
 
   describe('findAll', () => {
     it('should delegate to LinksService.findAll', async () => {
-      jest.spyOn(service, 'findAll').mockResolvedValue([mockLink]);
+      vi.mocked(service.findAll).mockResolvedValue([mockLink]);
 
       const result = await controller.findAll();
 
@@ -70,7 +55,7 @@ describe('LinksController', () => {
 
   describe('findOne', () => {
     it('should delegate to LinksService.findOne with parsed id', async () => {
-      jest.spyOn(service, 'findOne').mockResolvedValue(mockLink);
+      vi.mocked(service.findOne).mockResolvedValue(mockLink);
 
       const result = await controller.findOne('1');
 
@@ -82,7 +67,7 @@ describe('LinksController', () => {
   describe('update', () => {
     it('should delegate to LinksService.update with parsed id', async () => {
       const updated = { ...mockLink, title: 'Updated' };
-      jest.spyOn(service, 'update').mockResolvedValue(updated);
+      vi.mocked(service.update).mockResolvedValue(updated);
 
       const dto = { title: 'Updated' };
       const result = await controller.update('1', dto);
@@ -94,7 +79,7 @@ describe('LinksController', () => {
 
   describe('remove', () => {
     it('should delegate to LinksService.remove with parsed id', async () => {
-      jest.spyOn(service, 'remove').mockResolvedValue(undefined);
+      vi.mocked(service.remove).mockResolvedValue(undefined);
 
       const result = await controller.remove('1');
 

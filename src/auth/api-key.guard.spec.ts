@@ -14,8 +14,8 @@ describe('ApiKeyGuard', () => {
     headers: Record<string, string> = {},
   ): ExecutionContext {
     return {
-      getHandler: jest.fn(),
-      getClass: jest.fn(),
+      getHandler: vi.fn(),
+      getClass: vi.fn(),
       switchToHttp: () => ({
         getRequest: () => ({ headers }),
       }),
@@ -25,7 +25,7 @@ describe('ApiKeyGuard', () => {
   beforeEach(() => {
     reflector = new Reflector();
     configService = {
-      get: jest.fn().mockReturnValue(API_KEY),
+      get: vi.fn().mockReturnValue(API_KEY),
     } as unknown as ConfigService;
     guard = new ApiKeyGuard(reflector, configService);
   });
@@ -35,21 +35,21 @@ describe('ApiKeyGuard', () => {
   });
 
   it('should allow access when route is marked @Public()', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(true);
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(true);
     const context = createMockContext();
 
     expect(guard.canActivate(context)).toBe(true);
   });
 
   it('should allow access with valid API key', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
     const context = createMockContext({ 'x-api-key': API_KEY });
 
     expect(guard.canActivate(context)).toBe(true);
   });
 
   it('should throw UnauthorizedException when x-api-key header is missing', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
     const context = createMockContext();
 
     expect(() => guard.canActivate(context)).toThrow(UnauthorizedException);
@@ -59,7 +59,7 @@ describe('ApiKeyGuard', () => {
   });
 
   it('should throw UnauthorizedException when API key is wrong', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
     const context = createMockContext({ 'x-api-key': 'wrong-key' });
 
     expect(() => guard.canActivate(context)).toThrow(UnauthorizedException);
@@ -67,8 +67,8 @@ describe('ApiKeyGuard', () => {
   });
 
   it('should throw UnauthorizedException when API_KEY env var is not configured', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
-    (configService.get as jest.Mock).mockReturnValue(undefined);
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
+    (configService.get as ReturnType<typeof vi.fn>).mockReturnValue(undefined);
     const context = createMockContext({ 'x-api-key': 'some-key' });
 
     expect(() => guard.canActivate(context)).toThrow(UnauthorizedException);
@@ -76,14 +76,14 @@ describe('ApiKeyGuard', () => {
   });
 
   it('should reject keys of different lengths', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false);
     const context = createMockContext({ 'x-api-key': 'short' });
 
     expect(() => guard.canActivate(context)).toThrow(UnauthorizedException);
   });
 
   it('should not check API key for public routes', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(true);
+    vi.spyOn(reflector, 'getAllAndOverride').mockReturnValue(true);
     // No x-api-key header, but route is public — should still pass
     const context = createMockContext();
 
