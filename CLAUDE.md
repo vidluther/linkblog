@@ -62,10 +62,20 @@ AppModule
 - CI runs on PRs to `main` (`.github/workflows/ci.yml`): install, lint, fmt:check, build, test, plus extension lint/typecheck/build.
 - Branch protection on `main` requires the `ci` status check to pass before merge.
 
-## Testing (Jest)
+## Testing (Vitest)
 
-- Mock Supabase with a chainable object (`from/select/insert/update/delete/eq/order/single` all return `this`).
-- Use `Reflect.getMetadata(KEY, handler)` to verify decorator presence on controller methods.
+- Vitest with `globals: true` provides `describe`, `it`, `expect`, `beforeEach` globally
+- Mock Supabase with a chainable object (`from/select/insert/update/delete/eq/order/single` all return `this`)
+- Use `vi.fn()` and `vi.spyOn()` (not Jest's `jest.fn()`)
+- Use `vi.mocked(service.method)` to type-spy on mocked methods
+- Use `Reflect.getMetadata(KEY, handler)` to verify decorator presence on controller methods
+- **Controller tests:** Due to Vitest + esbuild incompatibility with NestJS decorator metadata, instantiate controllers manually with mocked services instead of using `Test.createTestingModule()`:
+
+```typescript
+// Instead of Test.createTestingModule:
+const service = { method: vi.fn() } as unknown as SomeService;
+const controller = new SomeController(service);
+```
 
 ## Testing (Postman)
 

@@ -22,6 +22,11 @@ const titleInput = document.getElementById('link-title') as HTMLInputElement;
 const summaryInput = document.getElementById(
   'link-summary',
 ) as HTMLTextAreaElement;
+const toggleApiKeyBtn = document.getElementById(
+  'toggle-api-key',
+) as HTMLButtonElement;
+const eyeIcon = document.getElementById('eye-icon') as HTMLElement;
+const eyeOffIcon = document.getElementById('eye-off-icon') as HTMLElement;
 
 let activeTabUrl = '';
 
@@ -35,6 +40,13 @@ function showStatus(
   setTimeout(() => {
     element.className = 'status-message hidden';
   }, 4000);
+}
+
+function toggleApiKeyVisibility(): void {
+  const isPassword = apiKeyInput.type === 'password';
+  apiKeyInput.type = isPassword ? 'text' : 'password';
+  eyeIcon.classList.toggle('hidden', isPassword);
+  eyeOffIcon.classList.toggle('hidden', !isPassword);
 }
 
 async function loadActiveTab(): Promise<void> {
@@ -101,6 +113,7 @@ async function handleSaveSettings(): Promise<void> {
 
 saveBtn.addEventListener('click', handleSaveLink);
 saveSettingsBtn.addEventListener('click', handleSaveSettings);
+toggleApiKeyBtn.addEventListener('click', toggleApiKeyVisibility);
 
 loadActiveTab();
 loadSettings();
