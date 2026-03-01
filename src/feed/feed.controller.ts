@@ -1,14 +1,14 @@
-import { Controller, Get, Header, Param } from '@nestjs/common';
+import { Controller, Get, Header, Param } from "@nestjs/common";
 import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
   ApiProduces,
   ApiTags,
-} from '@nestjs/swagger';
-import { FeedService } from './feed.service';
-import { UsersService } from '../users/users.service.js';
-import { Public } from '../auth/public.decorator';
+} from "@nestjs/swagger";
+import { FeedService } from "./feed.service";
+import { UsersService } from "../users/users.service.js";
+import { Public } from "../auth/public.decorator";
 
 const RSS_EXAMPLE = `<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
@@ -27,12 +27,12 @@ const RSS_EXAMPLE = `<?xml version="1.0" encoding="utf-8"?>
   </channel>
 </rss>`;
 
-@ApiTags('Feed')
+@ApiTags("Feed")
 @ApiParam({
-  name: 'username',
-  description: 'The username whose feed to retrieve',
+  name: "username",
+  description: "The username whose feed to retrieve",
 })
-@Controller(':username/feed')
+@Controller(":username/feed")
 export class FeedController {
   constructor(
     private readonly feedService: FeedService,
@@ -41,19 +41,19 @@ export class FeedController {
 
   @Public()
   @Get()
-  @Header('Content-Type', 'application/rss+xml')
-  @ApiProduces('application/rss+xml')
+  @Header("Content-Type", "application/rss+xml")
+  @ApiProduces("application/rss+xml")
   @ApiOkResponse({
     description: "RSS 2.0 feed of the user's links",
     content: {
-      'application/rss+xml': {
-        schema: { type: 'string' },
+      "application/rss+xml": {
+        schema: { type: "string" },
         example: RSS_EXAMPLE,
       },
     },
   })
-  @ApiNotFoundResponse({ description: 'User not found' })
-  async getFeed(@Param('username') username: string): Promise<string> {
+  @ApiNotFoundResponse({ description: "User not found" })
+  async getFeed(@Param("username") username: string): Promise<string> {
     const profile = await this.usersService.findByUsername(username);
     return this.feedService.generateRssFeed(profile.id, username);
   }

@@ -6,7 +6,7 @@ import {
   Patch,
   Param,
   Delete,
-} from '@nestjs/common';
+} from "@nestjs/common";
 import {
   ApiCreatedResponse,
   ApiNoContentResponse,
@@ -15,24 +15,24 @@ import {
   ApiParam,
   ApiSecurity,
   ApiTags,
-} from '@nestjs/swagger';
-import { LinksService } from './links.service';
-import { UsersService } from '../users/users.service.js';
-import { CreateLinkDto } from './dto/create-link.dto';
-import { UpdateLinkDto } from './dto/update-link.dto';
-import { LinkResponseDto } from './dto/link-response.dto';
-import { Public } from '../auth/public.decorator';
-import { CurrentUser } from '../auth/current-user.decorator.js';
+} from "@nestjs/swagger";
+import { LinksService } from "./links.service";
+import { UsersService } from "../users/users.service.js";
+import { CreateLinkDto } from "./dto/create-link.dto";
+import { UpdateLinkDto } from "./dto/update-link.dto";
+import { LinkResponseDto } from "./dto/link-response.dto";
+import { Public } from "../auth/public.decorator";
+import { CurrentUser } from "../auth/current-user.decorator.js";
 
 interface AuthUser {
   userId: string;
   username: string;
 }
 
-@ApiTags('Links')
-@ApiParam({ name: 'username', description: 'The username of the link owner' })
-@ApiSecurity('api-key')
-@Controller(':username/links')
+@ApiTags("Links")
+@ApiParam({ name: "username", description: "The username of the link owner" })
+@ApiSecurity("api-key")
+@Controller(":username/links")
 export class LinksController {
   constructor(
     private readonly linksService: LinksService,
@@ -41,7 +41,7 @@ export class LinksController {
 
   @Post()
   @ApiCreatedResponse({
-    description: 'The link has been created',
+    description: "The link has been created",
     type: LinkResponseDto,
   })
   create(@Body() createLinkDto: CreateLinkDto, @CurrentUser() user: AuthUser) {
@@ -51,44 +51,44 @@ export class LinksController {
   @Public()
   @Get()
   @ApiOkResponse({
-    description: 'List of all links for the user',
+    description: "List of all links for the user",
     type: [LinkResponseDto],
   })
-  async findAll(@Param('username') username: string) {
+  async findAll(@Param("username") username: string) {
     const profile = await this.usersService.findByUsername(username);
     return this.linksService.findAll(profile.id);
   }
 
   @Public()
-  @Get(':id')
+  @Get(":id")
   @ApiOkResponse({
-    description: 'The requested link',
+    description: "The requested link",
     type: LinkResponseDto,
   })
-  @ApiNotFoundResponse({ description: 'Link not found' })
-  async findOne(@Param('username') username: string, @Param('id') id: string) {
+  @ApiNotFoundResponse({ description: "Link not found" })
+  async findOne(@Param("username") username: string, @Param("id") id: string) {
     const profile = await this.usersService.findByUsername(username);
     return this.linksService.findOne(+id, profile.id);
   }
 
-  @Patch(':id')
+  @Patch(":id")
   @ApiOkResponse({
-    description: 'The updated link',
+    description: "The updated link",
     type: LinkResponseDto,
   })
-  @ApiNotFoundResponse({ description: 'Link not found' })
+  @ApiNotFoundResponse({ description: "Link not found" })
   update(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() updateLinkDto: UpdateLinkDto,
     @CurrentUser() user: AuthUser,
   ) {
     return this.linksService.update(+id, updateLinkDto, user.userId);
   }
 
-  @Delete(':id')
-  @ApiNoContentResponse({ description: 'The link has been deleted' })
-  @ApiNotFoundResponse({ description: 'Link not found' })
-  remove(@Param('id') id: string, @CurrentUser() user: AuthUser) {
+  @Delete(":id")
+  @ApiNoContentResponse({ description: "The link has been deleted" })
+  @ApiNotFoundResponse({ description: "Link not found" })
+  remove(@Param("id") id: string, @CurrentUser() user: AuthUser) {
     return this.linksService.remove(+id, user.userId);
   }
 }

@@ -1,14 +1,10 @@
 {
   "name": "linkblog",
   "version": "0.0.2",
-  "description": "My personal linkblog",
-  "author": "Vid Luther (vid@luther.io)",
   "private": true,
+  "description": "My personal linkblog",
   "license": "MIT",
-  "packageManager": "pnpm@10.28.2",
-  "engines": {
-    "node": ">=22.0.0"
-  },
+  "author": "Vid Luther (vid@luther.io)",
   "scripts": {
     "build": "nest build",
     "fmt": "oxfmt",
@@ -65,5 +61,9 @@
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^5.1.0",
     "vitest": "^2.1.9"
-  }
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "packageManager": "pnpm@10.28.2"
 }
