@@ -32,7 +32,7 @@ A personal bookmarking API built with **NestJS**, **TypeScript**, and **Supabase
 | Framework      | [NestJS](https://nestjs.com/) 11.x                                           |
 | Database       | [Supabase](https://supabase.com/) (Postgres)                                 |
 | Edge Functions | [Supabase Edge Functions](https://supabase.com/docs/guides/functions) (Deno) |
-| Hosting        | AWS App Runner (Docker)                                                      |
+| Hosting        | AWS App Runner                                                               |
 | Feed Format    | RSS 2.0                                                                      |
 | Linting        | [oxlint](https://oxc.rs/) + [oxfmt](https://oxc.rs/)                         |
 | API Docs       | [Swagger/OpenAPI](https://swagger.io/) via `@nestjs/swagger`                 |
