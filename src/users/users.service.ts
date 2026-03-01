@@ -22,7 +22,7 @@ export class UsersService {
     const { data, error } = await this.supabase
       .from('profiles')
       .select('id, username')
-      .eq('username', username)
+      .eq('username', username.toLowerCase())
       .single();
 
     if (error) {

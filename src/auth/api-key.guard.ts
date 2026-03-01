@@ -65,7 +65,8 @@ export class ApiKeyGuard implements CanActivate {
     const username: string = profileRow.username;
 
     // If there is a :username param in the URL, verify the key owner matches
-    const usernameParam: string | undefined = request.params?.username;
+    const usernameParam: string | undefined =
+      request.params?.username?.toLowerCase();
     if (usernameParam && usernameParam !== username) {
       throw new ForbiddenException('API key does not match the requested user');
     }
