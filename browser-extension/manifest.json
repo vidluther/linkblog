@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Linkblog",
+  "name": "Linklog",
   "version": "1.0.2",
   "description": "Save links to your linkblog with one click, right-click, or keyboard shortcut",
   "permissions": ["activeTab", "storage", "contextMenus", "notifications"],
-  "host_permissions": ["https://api.linkblog.in/*"],
+  "host_permissions": ["https://api.linklog.app/*"],
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": {

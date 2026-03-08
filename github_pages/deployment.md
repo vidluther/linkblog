@@ -52,7 +52,7 @@ docker build -t linkblog .
 docker run -p 3000:3000 \
   -e SUPABASE_URL=https://your-project.supabase.co \
   -e SUPABASE_SERVICE_ROLE_KEY=your-service-role-key \
-  -e API_URL=https://api.linkblog.in \
+  -e API_URL=https://api.linklog.app \
   linkblog
 ```
 
@@ -99,7 +99,7 @@ To use a custom domain with App Runner:
 3. Create the DNS records (CNAME) as instructed
 4. Wait for certificate validation
 
-The production API is at `api.linkblog.in`.
+The production API is at `api.linklog.app`.
 
 ## CI/CD
 

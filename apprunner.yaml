@@ -24,4 +24,4 @@ run:
     - name: SUPABASE_SERVICE_ROLE_KEY
       value: "jdfkjfkdljdflkjfdlkjfkdljk"
     - name: API_URL
-      value: "https://api.linkblog.in"
+      value: "https://api.linklog.app"

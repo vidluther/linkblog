@@ -26,7 +26,7 @@ Create a `.env` file in the project root:
 ```env
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-API_URL=https://api.linkblog.in
+API_URL=https://api.linklog.app
 PORT=3000
 ```
 

@@ -14,7 +14,7 @@ const RSS_EXAMPLE = `<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
   <channel>
     <title>jdoe's Linkblog</title>
-    <link>https://api.linkblog.in/jdoe/feed</link>
+    <link>https://api.linklog.app/jdoe/feed</link>
     <description>Things that I found interesting</description>
     <language>en</language>
     <generator>Linkblog</generator>

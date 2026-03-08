@@ -15,7 +15,7 @@ export class FeedService {
 
     const appUrl = this.configService.get<string>(
       "API_URL",
-      "https://api.linkblog.in",
+      "https://api.linklog.app",
     );
     const feedUrl = `${appUrl}/${handle}/feed`;
 
