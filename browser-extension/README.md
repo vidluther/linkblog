@@ -84,7 +84,7 @@ browser-extension/
 
 ## API
 
-The extension POSTs to your linkblog API endpoint (default: `https://api.linkblog.in/links`).
+The extension POSTs to your linkblog API endpoint (default: `https://api.linklog.app/links`).
 
 **Success response:**
 

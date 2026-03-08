@@ -32,8 +32,8 @@ export interface ExtensionSettings {
 }
 
 // Default endpoint placeholder — users must replace {your-handle} with their actual handle.
-// Format: https://api.linkblog.in/{your-handle}/links
+// Format: https://api.linklog.app/{your-handle}/links
 export const DEFAULT_SETTINGS: ExtensionSettings = {
   apiKey: "",
-  apiEndpoint: "https://api.linkblog.in/{your-handle}/links",
+  apiEndpoint: "https://api.linklog.app/{your-handle}/links",
 };

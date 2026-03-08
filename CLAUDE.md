@@ -9,7 +9,7 @@ Linkblog Service - This the API for Linkblog, a linkblog service.
 - **Endpoints:** `/:handle/links` (CRUD; reads public, writes protected), `/:handle/feed` (public RSS 2.0), `/:handle/api-keys` (key management, protected), `/health` (public), `/api-docs` (Swagger UI)
 - **Auth:** Multi-user, global `ApiKeyGuard` via `APP_GUARD`. Write endpoints require `x-api-key` header (per-user keys stored as SHA-256 hashes in `api_keys` table). Public routes use `@Public()` decorator to opt out. See `src/auth/`.
 - **Data model:** Supabase tables: `links` (id, url, title, summary, user_id, created_at, updated_at), `profiles` (id, handle), `api_keys` (id, user_id, name, key_hash, created_at, last_used_at), `app_config` (key, value)
-- **Deploy:** AWS App Runner (manual console config; `apprunner.yaml` is reference only). Production URL: `api.linkblog.in`
+- **Deploy:** AWS App Runner (manual console config; `apprunner.yaml` is reference only). Production URL: `api.linklog.app`
 
 ## Commands
 

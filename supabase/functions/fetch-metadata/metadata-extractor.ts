@@ -2,7 +2,7 @@ import { parseHTML } from "linkedom";
 
 const FETCH_TIMEOUT_MS = 10_000;
 const MAX_RESPONSE_BYTES = 5_000_000;
-const USER_AGENT = "Dogmatix/1.0 (+https://api.linkblog.in)";
+const USER_AGENT = "Dogmatix/1.0 (+https://api.linklog.app)";
 const MAX_TITLE_LENGTH = 500;
 const MAX_DESCRIPTION_LENGTH = 1000;
 

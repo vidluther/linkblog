@@ -14,7 +14,7 @@ main:
   - title: "Edge Functions"
     url: /edge-functions
   - title: "API Docs"
-    url: https://api.linkblog.in/docs
+    url: https://api.linklog.app/docs
 
 docs:
   - title: "Getting Started"
