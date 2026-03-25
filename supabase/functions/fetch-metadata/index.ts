@@ -30,20 +30,16 @@ Deno.serve(async (req: Request) => {
   const limit = limitParam ? parseInt(limitParam, 10) : 20;
   console.log("[params] limit=%d, link_id=%s", limit, linkIdParam ?? "none");
 
-  // Init Supabase client with secret key (bypasses RLS)
-  // SUPABASE_URL is auto-injected by the runtime.
-  // SB_PUBLISHABLE_KEY (sb_secret_*) replaces the legacy service_role JWT key.
-  // Not yet auto-injected — must be set via .env.local (local) or supabase secrets set (hosted).
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const secretKey = Deno.env.get("SB_PUBLISHABLE_KEY");
+  const secretKey = Deno.env.get("SB_SERVICE_ROLE_KEY");
 
   console.log("[env] SUPABASE_URL present:", !!supabaseUrl);
-  console.log("[env] SB_PUBLISHABLE_KEY present:", !!secretKey);
+  console.log("[env] SB_SERVICE_ROLE_KEY present:", !!secretKey);
 
   if (!supabaseUrl || !secretKey) {
     return new Response(
       JSON.stringify({
-        error: "SUPABASE_URL or SB_PUBLISHABLE_KEY not configured",
+        error: "SUPABASE_URL or SB_SERVICE_ROLE_KEY not configured",
       }),
       { status: 500, headers: { "Content-Type": "application/json" } },
     );
