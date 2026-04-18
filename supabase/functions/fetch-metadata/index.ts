@@ -11,6 +11,28 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+type WebhookResult = { called: boolean; status?: number; error?: string };
+
+async function callBuildHook(): Promise<WebhookResult> {
+  const webhookUrl = Deno.env.get("RUN_AFTER_METADATA_EXTRACTOR");
+
+  if (!webhookUrl) {
+    console.log("[webhook] RUN_AFTER_METADATA_EXTRACTOR not set, skipping");
+    return { called: false };
+  }
+
+  console.log("[webhook] calling %s", webhookUrl);
+  try {
+    const res = await fetch(webhookUrl, { method: "POST" });
+    console.log("[webhook] response status=%d", res.status);
+    return { called: true, status: res.status };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.log("[webhook] error: %s", message);
+    return { called: false, error: message };
+  }
+}
+
 Deno.serve(async (req: Request) => {
   console.log(`[request] ${req.method} ${req.url}`);
 
@@ -88,12 +110,14 @@ Deno.serve(async (req: Request) => {
   );
 
   if (linksToProcess.length === 0) {
+    const webhook = await callBuildHook();
     return new Response(
       JSON.stringify({
         processed: 0,
         updated: 0,
         errors: [],
         message: "All links have set values",
+        webhook,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } },
     );
@@ -188,12 +212,15 @@ Deno.serve(async (req: Request) => {
     errors.length,
   );
 
+  const webhook = await callBuildHook();
+
   return new Response(
     JSON.stringify({
       processed: linksToProcess.length,
       updated,
       errors,
       details,
+      webhook,
     }),
     { status: 200, headers: { "Content-Type": "application/json" } },
   );
