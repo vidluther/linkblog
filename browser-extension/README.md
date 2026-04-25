@@ -73,15 +73,35 @@ If you'd rather not use `web-ext`:
 
 Temporary add-ons are removed when Firefox restarts.
 
-## Packaging an XPI for local install
+## Packaging for distribution
 
-Build a distributable `.xpi` (zip with manifest at the root) you can hand to a tester or load yourself:
+Build distributable archives for one or both browsers:
 
 ```bash
-pnpm --filter linkblog-extension package:firefox
+pnpm --filter linkblog-extension package           # both browsers
+pnpm --filter linkblog-extension package:firefox   # Firefox XPI only
+pnpm --filter linkblog-extension package:chrome    # Chrome ZIP only
 ```
 
-The XPI lands in `browser-extension/web-ext-artifacts/linklog-<version>.xpi`. To install it:
+Outputs land in `browser-extension/dist/`:
+
+- `linklog-firefox-<version>.xpi` — Firefox-loadable, also accepted by AMO
+- `linklog-chrome-<version>.zip` — uploadable to the Chrome Web Store
+
+### Bumping the version
+
+Both stores reject re-uploads where the version didn't increase. Use the `bump` script to update `package.json` and both manifests in lockstep:
+
+```bash
+pnpm --filter linkblog-extension bump patch    # 1.0.2 → 1.0.3
+pnpm --filter linkblog-extension bump minor    # 1.0.2 → 1.1.0
+pnpm --filter linkblog-extension bump major    # 1.0.2 → 2.0.0
+pnpm --filter linkblog-extension bump 1.2.3    # explicit version
+```
+
+Then re-run `pnpm --filter linkblog-extension package` to produce archives at the new version.
+
+### Loading the Firefox XPI locally
 
 1. Open `about:debugging#/runtime/this-firefox`
 2. Click **Load Temporary Add-on…** and pick the `.xpi` file (Firefox accepts both unpacked manifests and packed XPIs here)
@@ -100,10 +120,11 @@ Permanent install in release Firefox requires a signed extension. Steps (not yet
    pnpm --filter linkblog-extension build:firefox
    pnpm --filter linkblog-extension exec web-ext sign \
      --source-dir dist/firefox \
+     --artifacts-dir dist \
      --api-key <jwt-issuer> \
      --api-secret <jwt-secret>
    ```
-4. The signed `.xpi` lands in `web-ext-artifacts/`.
+4. The signed `.xpi` lands in `browser-extension/dist/`.
 
 ## Project Structure
 
@@ -121,9 +142,13 @@ browser-extension/
 │   └── types/
 │       └── index.ts               # Shared TypeScript interfaces
 ├── icons/                         # Extension icons (16, 48, 128px)
+├── scripts/
+│   └── bump-version.mjs           # Sync version across package.json + both manifests
 ├── dist/
 │   ├── chrome/                    # Built Chrome extension (load-unpacked target)
-│   └── firefox/                   # Built Firefox extension (web-ext target)
+│   ├── firefox/                   # Built Firefox extension (web-ext target)
+│   ├── linklog-chrome-*.zip       # Packaged Chrome ZIP (from package:chrome)
+│   └── linklog-firefox-*.xpi      # Packaged Firefox XPI (from package:firefox)
 ├── package.json
 └── tsconfig.json
 ```
