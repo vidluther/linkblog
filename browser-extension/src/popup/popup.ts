@@ -1,7 +1,7 @@
 import type { SaveLinkResult, ExtensionSettings } from "../types/index.js";
 import { DEFAULT_SETTINGS } from "../types/index.js";
 
-// Chrome exposes `chrome`, Safari/Firefox expose `browser`
+// Chrome exposes `chrome`, Firefox exposes `browser`
 const browser = globalThis.browser ?? globalThis.chrome;
 
 const saveBtn = document.getElementById("save-btn") as HTMLButtonElement;

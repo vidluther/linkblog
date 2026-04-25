@@ -31,3 +31,4 @@ jobs:
       - run: pnpm --filter linkblog-extension lint
       - run: pnpm --filter linkblog-extension typecheck
       - run: pnpm --filter linkblog-extension build
+      - run: pnpm --filter linkblog-extension lint:webext

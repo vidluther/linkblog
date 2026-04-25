@@ -1,6 +1,7 @@
 node_modules
 .env
 dist
+web-ext-artifacts
 netlify/.netlify
 .DS_Store
 .claude.local.md

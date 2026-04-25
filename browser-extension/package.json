@@ -5,18 +5,25 @@
   "description": "Save links to your linkblog from any browser tab",
   "type": "module",
   "scripts": {
-    "build": "pnpm lint && pnpm typecheck && pnpm compile && pnpm copy-assets",
-    "copy-assets": "cp manifest.json dist/ && cp src/popup/popup.html dist/popup/ && cp src/popup/popup.css dist/popup/ && cp -r icons dist/",
+    "build": "pnpm lint && pnpm typecheck && pnpm compile && pnpm copy-assets:chrome && pnpm copy-assets:firefox",
+    "build:chrome": "pnpm compile && pnpm copy-assets:chrome",
+    "build:firefox": "pnpm compile && pnpm copy-assets:firefox",
+    "copy-assets:chrome": "rm -rf dist/chrome && mkdir -p dist/chrome/popup && cp manifest.chrome.json dist/chrome/manifest.json && cp -r dist/background dist/types dist/chrome/ && cp dist/popup/popup.js dist/chrome/popup/ && cp src/popup/popup.html dist/chrome/popup/ && cp src/popup/popup.css dist/chrome/popup/ && cp -r icons dist/chrome/",
+    "copy-assets:firefox": "rm -rf dist/firefox && mkdir -p dist/firefox/popup && cp manifest.firefox.json dist/firefox/manifest.json && cp -r dist/background dist/types dist/firefox/ && cp dist/popup/popup.js dist/firefox/popup/ && cp src/popup/popup.html dist/firefox/popup/ && cp src/popup/popup.css dist/firefox/popup/ && cp -r icons dist/firefox/",
     "compile": "tsc",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src/",
     "lint:fix": "oxlint --fix src/",
+    "lint:webext": "pnpm build:firefox && web-ext lint --source-dir dist/firefox",
+    "dev:firefox": "pnpm build:firefox && web-ext run --source-dir dist/firefox",
+    "package:firefox": "pnpm build:firefox && web-ext build --source-dir dist/firefox --artifacts-dir web-ext-artifacts --filename {name}-{version}.xpi --overwrite-dest",
     "watch": "tsc --watch",
     "clean": "rm -rf dist"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.287",
     "oxlint": "^1.43.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "web-ext": "^8.3.0"
   }
 }
