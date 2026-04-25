@@ -84,11 +84,11 @@ const controller = new SomeController(service);
 
 ## Browser Extension
 
-`browser-extension/` — Chrome/Safari MV3 extension (workspace package `linkblog-extension`).
-Build: `pnpm build:extension`. Clean build: `pnpm clean:extension`. Source in `browser-extension/src/`.
+`browser-extension/` — Chrome/Firefox MV3 extension (workspace package `linkblog-extension`).
+Build: `pnpm build:extension` (builds both browsers). Per-browser: `pnpm --filter linkblog-extension build:chrome` or `build:firefox`. Local Firefox dev with auto-reload: `pnpm --filter linkblog-extension dev:firefox` (uses `web-ext`). Clean build: `pnpm clean:extension`. Source in `browser-extension/src/`.
 
+- Per-browser manifests: `manifest.chrome.json` (uses `service_worker`), `manifest.firefox.json` (uses `background.scripts` + `browser_specific_settings.gecko.id`). Outputs to `dist/chrome/` and `dist/firefox/`.
 - Uses `browser.*` namespace with a `globalThis.browser ?? globalThis.chrome` shim for cross-browser compat.
-- Safari: `notifications` API is unsupported; notification calls silently no-op.
 - Root `tsconfig.json` and `tsconfig.build.json` both exclude `browser-extension/` and `supabase/` to avoid NestJS compilation conflicts (Deno/non-Node code).
 
 ## Supabase Edge Functions
